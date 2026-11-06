@@ -436,15 +436,18 @@
   .ar-band-g{display:flex;justify-content:center;align-items:flex-end;gap:clamp(18px,2.4vw,32px);}
   /* 두 사진 높이를 맞추고, 폭은 각 사진의 원래 비율대로 */
   .ar-band-g{--bh:clamp(130px,21vw,300px);}
-  .ar-band-p,.ar-band-w{position:relative;flex:none;min-width:0;}
-  .ar-band-g .ar-nat{height:var(--bh);width:auto;}
-  .ar-band-g .ar-nat.has img{height:100%;width:auto;max-width:none;}
+  /* 두 사진 높이를 맞춤 — 사파리에서도 크기가 0이 되지 않게 높이·폭을 직접 지정 */
+  .ar-band-p,.ar-band-w{position:relative;flex:none;}
+  .ar-band-g .ar-nat{height:var(--bh);}
+  .ar-band-p .ar-nat{width:calc(var(--bh) * .75);}
+  .ar-band-p .ar-nat.has{width:auto;height:auto;}
+  .ar-band-p .ar-nat.has img{height:var(--bh);width:auto;max-width:none;}
   /* 오른쪽 칸은 가로(3:2) 자리 — 세로 사진을 올려도 가로로 맞춰 보여 줌 */
-  .ar-band-w .ar-nat,.ar-band-w .ar-nat.has{aspect-ratio:3/2;overflow:hidden;}
+  .ar-band-w .ar-nat,.ar-band-w .ar-nat.has{width:calc(var(--bh) * 1.5);height:var(--bh);aspect-ratio:auto;overflow:hidden;}
   .ar-band-w .ar-nat.has img{width:100%;height:100%;object-fit:cover;object-position:50% 44%;}
   .ar-band-t{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;margin-top:clamp(36px,6vh,56px);}
   .ar-band-t .ar-lab{line-height:1.8;color:#7A7267;}
-  .ar-band-t p{max-width:100%;font-size:12.5px;line-height:2.1;color:#5A564F;text-wrap:pretty;}
+  .ar-band-t p{max-width:100%;font-size:12.5px;line-height:2.1;color:#5A564F;}
 
   /* ③ 카테고리 인덱스 */
   .ar-idx{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:clamp(40px,6vw,88px);
