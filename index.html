@@ -475,6 +475,7 @@
   .ar-chead,.ar-vhead{padding:clamp(24px,4vw,56px) var(--ax) clamp(40px,5vw,64px);}
   .ar-ch1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(40px,6vw,92px);line-height:1;
     text-transform:uppercase;display:flex;flex-direction:column;gap:.1em;}
+  .ar-ch1.ar-mt{margin-top:clamp(24px,4vw,48px);}
   .ar-ch1 .ar-r,.ar-vh1 .ar-r{align-self:flex-end;text-align:right;font-style:italic;font-weight:400;}
   .ar-cbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:32px;
     margin-top:clamp(32px,5vw,56px);padding-bottom:20px;border-bottom:1px solid #393733;}
@@ -483,7 +484,7 @@
   .ar-tabs{display:flex;gap:28px;}
   .arc .ar-tab{padding-bottom:8px;border-bottom:1px solid transparent;color:#7A7267;transition:color .25s,border-color .25s;}
   .arc .ar-tab.on{color:#393733;border-bottom-color:#393733;}
-  .ar-vwrap{padding:0 var(--ax) clamp(72px,10vw,140px);}
+  .ar-vwrap{padding:0 var(--ax) clamp(56px,8vw,96px);}
   .ar-vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:clamp(36px,4vw,56px) clamp(16px,2vw,28px);}
   .ar-vcard{display:flex;flex-direction:column;gap:14px;}
   .ar-cover{aspect-ratio:3/4;position:relative;overflow:hidden;}
@@ -547,6 +548,9 @@
     .ar-groups{gap:40px;}
   }
 </style>
+<style>/* 메뉴의 𓍯 기호 — 어떤 기기에서도 보이도록 글자 하나만 담은 폰트(Noto Sans Egyptian Hieroglyphs, OFL) */
+@font-face{font-family:'SOONE Hiero';src:url(data:font/woff2;base64,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) format('woff2');unicode-range:U+1336F;}
+.hiero{font-family:'SOONE Hiero','Noto Sans Egyptian Hieroglyphs','Segoe UI Historic',sans-serif;letter-spacing:0;}</style>
 <script>
 /* ══ SOON:E ARCHIVE 저장소 설정 ══
    Archive 사진·홀 목록은 이 GitHub 저장소의 archive/ 폴더에 저장됩니다.
@@ -570,7 +574,7 @@ window.SOONE_ARCHIVE_CONFIG = {
     <a href="#home" data-page="home">Home<small>처음으로</small></a>
     <a href="#about" data-page="about">About<small>수네의 이야기</small></a>
     <a href="#letter" data-page="letter">Letter<small>전하는 마음</small></a>
-    <a href="#archive" data-page="archive">Archive<small>작업 기록</small></a>
+    <a href="#archive" data-page="archive">Archive<small>찰나의 시선 <span class="hiero">𓍯</span></small></a>
     <!-- [예약 오픈 시 복원] 아래 한 줄을 감싼 주석만 풀면 메뉴에 다시 나옵니다. RESERVATION 페이지 자체는 그대로 남아 있습니다.
     <a href="#reservation" data-page="reservation">Reservation<small>27' 10</small></a>
     -->
@@ -1561,13 +1565,15 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       '</div></div>';
     return '' +
     '<section class="ar-chead">' +
-      '<h1 class="ar-ch1"><span>' + c.group + '</span><span class="ar-r">— ' + c.name + '</span></h1>' +
+      '<a class="ar-lab ar-ul" href="#archive">← Archive</a>' +
+      '<h1 class="ar-ch1 ar-mt"><span>' + c.group + '</span><span class="ar-r">— ' + c.name + '</span></h1>' +
       '<div class="ar-cbar"><div class="ar-cbar-l"><div class="ar-lab">[ ' + c.no + ' / 05 ]</div><p>' + c.line + '</p></div>' + tabs + '</div>' +
     '</section>' +
     '<section class="ar-vwrap">' +
       '<div class="ar-vgrid">' + list.map(v => vCard(r, v)).join('') + add + '</div>' +
       (!list.length && !S.admin && S.ready ? '<p class="ar-empty">Coming soon.</p>' : '') +
-    '</section>';
+    '</section>' +
+    '<section class="ar-vfoot"><a class="ar-lab ar-ul" href="#archive">← All moods</a></section>';
   }
 
   /* ── 화면 ③ 예식홀 ── */
