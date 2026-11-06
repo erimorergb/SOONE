@@ -1,0 +1,17 @@
+{
+ "venues": [
+  {
+   "list_key": "preveil",
+   "id": "frida",
+   "en": "FRIDA",
+   "kr": "프리다",
+   "count": 24,
+   "wide": [],
+   "filled": [],
+   "has_cover": false,
+   "ver": 0,
+   "sort": 1
+  }
+ ],
+ "site": []
+}
