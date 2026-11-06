@@ -1421,7 +1421,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       }
       items.filter(x => x.sha).forEach(x => tree.push({ path:x.path, mode:'100644', type:'blob', sha:x.sha }));
       if(withData){
-        const all = []; LIST_KEYS.forEach(k => S.venues[k].forEach(v => { const o = { list_key:v.list_key, id:v.id, en:v.en, kr:v.kr, count:v.count, wide:v.wide, filled:v.filled, has_cover:v.has_cover, ver:v.ver, sort:v.sort }; if(v.repo) o.repo = v.repo; all.push(o); }));
+        const all = []; LIST_KEYS.forEach(k => S.venues[k].forEach(v => { const o = { list_key:v.list_key, id:v.id, en:v.en, kr:v.kr, count:v.count, wide:v.wide, filled:v.filled, order:ord(v), has_cover:v.has_cover, ver:v.ver, sort:v.sort }; if(v.repo) o.repo = v.repo; all.push(o); }));
         const data = JSON.stringify({ venues:all, site:Object.keys(S.site).map(slot => ({ slot, ver:S.site[slot] })) }, null, 1);
         tree.push({ path:DATA_PATH, mode:'100644', type:'blob', content:data });
       }
@@ -1658,30 +1658,32 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   }
 
   /* ── 화면 ③ 예식홀 ── */
-  function figHTML(v, i, n, total){
-    const wide = v.wide.includes(i), has = v.filled.includes(i);
+  /* 사진 순서: v.order = 화면에 보이는 순서대로의 파일 번호. 중간 사진을 지우면 뒤 사진이 앞으로 당겨지고 번호도 다시 매겨짐 */
+  function ord(v){ if(!v.order) v.order = v.filled.slice().sort((a, b) => a - b); return v.order; }
+  function syncFilled(v){ v.filled = ord(v).slice(); }
+  function nextFree(v){ const used = new Set(ord(v)); let i = 0; while(used.has(i)) i++; return i; }
+  function figAt(v, p){
+    const o = ord(v), has = p < o.length, i = has ? o[p] : -1;
+    const wide = has && v.wide.includes(i);
     const src = has ? store.url(photoPath(v, i), v.ver, v.repo) : '';
     if(!S.admin){
       return '<figure class="ar-fig reveal' + (wide ? ' w' : '') + '"><img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' +
-        '<figcaption><span>' + pad(n) + ' / ' + pad(total) + '</span></figcaption></figure>';
+        '<figcaption><span>' + pad(p + 1) + ' / ' + pad(o.length) + '</span></figcaption></figure>';
     }
-    return '<figure class="ar-fig' + (wide ? ' w' : '') + '" data-fig="' + i + '">' +
-      '<div class="ar-slot' + (has ? ' has' : '') + '" data-up="photo" data-i="' + i + '">' +
-        (has ? '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' : '<span class="ar-phl">' + pad(i + 1) + '</span>') + '</div>' +
-      '<figcaption><span>' + pad(i + 1) + ' / ' + pad(v.count) + '</span><span class="ar-ops">' +
-        (has ? '<button data-act="clear" data-i="' + i + '">삭제</button>' : '') +
-        '<button data-act="flip" data-i="' + i + '">' + (wide ? '세로로 바꾸기' : '가로로 바꾸기') + '</button>' +
+    return '<figure class="ar-fig' + (wide ? ' w' : '') + '" data-p="' + p + '">' +
+      '<div class="ar-slot' + (has ? ' has' : '') + '" data-up="photo" data-p="' + p + '">' +
+        (has ? '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' : '<span class="ar-phl">' + pad(p + 1) + '</span>') + '</div>' +
+      '<figcaption><span>' + pad(p + 1) + ' / ' + pad(Math.max(v.count, o.length)) + '</span><span class="ar-ops">' +
+        (has ? '<button data-act="clear" data-p="' + p + '">삭제</button><button data-act="flip" data-p="' + p + '">' + (wide ? '세로로 바꾸기' : '가로로 바꾸기') + '</button>' : '') +
       '</span></figcaption></figure>';
   }
   function rVenue(r, v){
     const c = r.cat, pre = c.key === 'preveil', list = S.venues[r.lk];
     const vi = list.indexOf(v), next = list[(vi + 1) % list.length];
     let figs = '';
-    if(S.admin){ for(let i = 0; i < v.count; i++) figs += figHTML(v, i); }
-    else {
-      const shown = v.filled.filter(i => i < v.count).sort((a, b) => a - b);
-      figs = shown.map((i, n) => figHTML(v, i, n + 1, shown.length)).join('') || '<p class="ar-empty">Coming soon.</p>';
-    }
+    const o = ord(v);
+    if(S.admin){ const n = Math.max(v.count, o.length); for(let p = 0; p < n; p++) figs += figAt(v, p); }
+    else figs = o.map((_, p) => figAt(v, p)).join('') || '<p class="ar-empty">Coming soon.</p>';
     return '' +
     '<section class="ar-vhead">' +
       '<a class="ar-lab ar-ul" href="' + catHref(r) + '">← ' + c.name + '</a>' +
@@ -1741,7 +1743,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     if(typeof obs !== 'undefined') root.querySelectorAll('.reveal').forEach(el => obs.observe(el));
     const f = root.querySelector('[data-form="login"] input'); if(f) f.focus();
   }
-  function patchFig(v, i){ const f = root.querySelector('[data-fig="' + i + '"]'); if(f) f.outerHTML = figHTML(v, i); }
+  function patchPos(v, p){ const f = root.querySelector('figure[data-p="' + p + '"]'); if(f) f.outerHTML = figAt(v, p); }
   function setBulkLabel(t){ const el = root.querySelector('[data-bulk-t]'); if(el) el.textContent = t; if(/업로드 중/.test(t)) toast(t.replace('업로드 중', '사진 올리는 중')); }
   function fail(err, msg){ console.error('[archive]', err); alert((msg || '저장하지 못했어요. 잠시 후 다시 시도해 주세요.') + '\n(' + (err && err.message || err) + ')'); }
   function busyGuard(){ if(S.busy){ alert('업로드가 끝난 뒤 다시 시도해 주세요.'); return true; } return false; }
@@ -1789,21 +1791,23 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     S.busy = false; render(); commit('사진 ' + slot);
   }
   function setWide(v, i, wide){ v.wide = v.wide.filter(x => x !== i); if(wide) v.wide.push(i); }
-  async function uploadPhoto(v, i, file, el){
+  async function uploadPhoto(v, p, file, el){
     if(busyGuard()) return; S.busy = true; el.classList.add('ar-wait');
+    const o = ord(v); let replaced = false;
     try {
+      const i = p < o.length ? o[p] : nextFree(v);
       const { blob, preview, wide } = await compress(file); await store.put(photoPath(v, i), blob, preview, v.repo);
-      if(v.filled.includes(i)) v.ver = bump(); else v.filled.push(i);
-      setWide(v, i, wide); await store.saveVenue(v);
+      if(p < o.length){ v.ver = bump(); replaced = true; } else { o.push(i); if(o.length > v.count) v.count = o.length; }
+      setWide(v, i, wide); syncFilled(v); await store.saveVenue(v);
     } catch(e){ fail(e, '사진을 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 올려 주세요)'); }
-    S.busy = false; patchFig(v, i); commit('사진 교체 ' + v.en);
+    S.busy = false; render(); commit((replaced ? '사진 교체 ' : '사진 추가 ') + v.en);
   }
   async function bulkUpload(v, files){
     if(busyGuard()) return;
     files = files.slice(); // 고른 순서 그대로
-    const empties = []; for(let i = 0; i < v.count; i++) if(!v.filled.includes(i)) empties.push(i);
-    const need = files.length - empties.length;
-    if(need > 0){ for(let k = 0; k < need; k++) empties.push(v.count + k); v.count += need; }
+    const o = ord(v);
+    const need = files.length - (v.count - o.length);
+    if(need > 0) v.count += need;
     S.busy = true;
     if(need > 0){ render(); }
     /* 휴대폰: 올리는 동안 화면이 꺼지지 않게 (지원되는 기기에서) */
@@ -1811,16 +1815,16 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     let fails = 0, lastSave = Date.now();
     for(let k = 0; k < files.length; k++){
       setBulkLabel('업로드 중 · ' + (k + 1) + ' / ' + files.length);
-      const i = empties[k];
-      const slot = root.querySelector('[data-fig="' + i + '"] .ar-slot'); if(slot) slot.classList.add('ar-wait');
+      const p = o.length;
+      const slot = root.querySelector('.ar-slot[data-p="' + p + '"]'); if(slot) slot.classList.add('ar-wait');
       try {
+        const i = nextFree(v);
         const { blob, preview, wide } = await compress(files[k]); await store.put(photoPath(v, i), blob, preview, v.repo);
-        if(!v.filled.includes(i)) v.filled.push(i);
-        setWide(v, i, wide);
-      } catch(e){ fails++; console.error('[archive]', files[k].name, e); }
-      patchFig(v, i);
+        o.push(i); setWide(v, i, wide); syncFilled(v);
+      } catch(e){ fails++; console.error('[archive]', files[k].name, e); if(slot) slot.classList.remove('ar-wait'); }
+      patchPos(v, p);
       if(k % 5 === 4){ try { await store.saveVenue(v); } catch(e){} }
-      /* 10장마다 중간 저장 — 휴대폰에서 중간에 끊겨도 그때까지 올린 사진은 남음 */
+      /* 약 12초마다 저장 — 휴대폰에서 중간에 끊겨도 그때까지 올린 사진은 남음 */
       if(Date.now() - lastSave > 12000 && k < files.length - 1){ lastSave = Date.now(); try { await store.saveVenue(v); } catch(e){} await commit(v.en + ' 사진 ' + (k + 1) + '장까지', true); }
     }
     try { await store.saveVenue(v); } catch(e){ fail(e); }
@@ -1829,21 +1833,28 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     try { if(lock) lock.release(); } catch(e){}
     if(fails) alert(fails + '장은 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 다시 올려 주세요)');
   }
-  async function flip(v, i){
-    const w = v.wide.includes(i); setWide(v, i, !w); patchFig(v, i);
+  async function flip(v, p){
+    const i = ord(v)[p]; if(i == null) return;
+    setWide(v, i, !v.wide.includes(i)); patchPos(v, p);
     try { await store.saveVenue(v); } catch(e){ fail(e); }
     commit('가로/세로 ' + v.en);
   }
-  async function clearPhoto(v, i){
-    if(busyGuard() || !confirm('이 사진을 삭제할까요?')) return;
-    try { await store.remove([photoPath(v, i)], v.repo); v.filled = v.filled.filter(x => x !== i); v.ver = bump(); await store.saveVenue(v); }
-    catch(e){ fail(e, '사진을 지우지 못했어요.'); }
-    patchFig(v, i); commit('사진 삭제 ' + v.en);
+  /* 중간 사진을 지우면 뒤 사진들이 한 칸씩 앞으로, 번호와 총 장수도 자동으로 다시 매겨짐 */
+  async function clearPhoto(v, p){
+    const o = ord(v), i = o[p]; if(i == null) return;
+    if(busyGuard() || !confirm(pad(p + 1) + '번 사진을 삭제할까요? 뒤 사진들이 앞으로 당겨져요.')) return;
+    try {
+      await store.remove([photoPath(v, i)], v.repo);
+      o.splice(p, 1); v.wide = v.wide.filter(x => x !== i); syncFilled(v); v.ver = bump();
+      await store.saveVenue(v);
+    } catch(e){ fail(e, '사진을 지우지 못했어요.'); }
+    render(); commit('사진 삭제 ' + v.en);
   }
   async function clearAll(v){
-    if(busyGuard() || !v.filled.length) return;
-    if(!confirm('이 홀의 사진 ' + v.filled.length + '장을 모두 삭제할까요? (대표사진과 홀은 남아요)')) return;
-    try { await store.remove(v.filled.map(i => photoPath(v, i)), v.repo); v.filled = []; v.wide = []; v.count = 24; v.ver = bump(); await store.saveVenue(v); }
+    const o = ord(v);
+    if(busyGuard() || !o.length) return;
+    if(!confirm('이 홀의 사진 ' + o.length + '장을 모두 삭제할까요? (대표사진과 홀은 남아요)')) return;
+    try { await store.remove(o.map(i => photoPath(v, i)), v.repo); v.order = []; syncFilled(v); v.wide = []; v.count = 24; v.ver = bump(); await store.saveVenue(v); }
     catch(e){ fail(e, '사진을 지우지 못했어요.'); }
     render(); commit('사진 전체 삭제 ' + v.en, true);
   }
@@ -1856,12 +1867,12 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   async function addSlots(v){ if(busyGuard()) return; v.count += 6; render(); try { await store.saveVenue(v); } catch(e){ fail(e); } commit('칸 추가 ' + v.en); }
   async function cutSlots(v){
     if(busyGuard()) return;
-    const nc = Math.max(6, v.count - 6); if(nc === v.count) return;
-    const gone = v.filled.filter(i => i >= nc);
+    const o = ord(v), nc = Math.max(6, v.count - 6); if(nc === v.count) return;
+    const gone = o.slice(nc);
     if(gone.length && !confirm('줄어드는 칸에 사진 ' + gone.length + '장이 있어요. 함께 지우고 줄일까요?')) return;
     try {
       await store.remove(gone.map(i => photoPath(v, i)), v.repo);
-      v.filled = v.filled.filter(i => i < nc); v.wide = v.wide.filter(i => i < nc); v.count = nc;
+      o.length = Math.min(o.length, nc); v.wide = v.wide.filter(i => o.includes(i)); syncFilled(v); v.count = nc;
       if(gone.length) v.ver = bump();
       await store.saveVenue(v);
     } catch(e){ fail(e); }
@@ -1891,7 +1902,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     if(kind === 'site') return uploadSite(el.dataset.slot, files[0], el);
     if(kind === 'cover'){ const v = findVenue(el.dataset.id); return v && uploadCover(v, files[0], el); }
     const v = curVenue(); if(!v) return;
-    if(kind === 'photo') return uploadPhoto(v, +el.dataset.i, files[0], el);
+    if(kind === 'photo') return uploadPhoto(v, +el.dataset.p, files[0], el);
     if(kind === 'bulk') return bulkUpload(v, files);
   }
 
@@ -1899,7 +1910,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     const a = e.target.closest('[data-act]');
     if(a){
       e.preventDefault();
-      const act = a.dataset.act, v = curVenue(), i = +a.dataset.i;
+      const act = a.dataset.act, v = curVenue(), i = +a.dataset.p;
       if(act === 'tab'){ const r = S.route; history.replaceState(null, '', '#archive/' + r.cat.key + (a.dataset.artist === 'lead' ? '/lead' : '')); render(); }
       else if(act === 'addvenue') addVenue();
       else if(act === 'delvenue') delVenue(a.dataset.id);
@@ -1985,7 +1996,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     (d.venues || []).forEach(row => {
       if(!S.venues[row.list_key]) return;
       S.venues[row.list_key].push({ list_key:row.list_key, id:row.id, en:row.en || '', kr:row.kr || '', count:row.count || 24,
-        wide:row.wide || [], filled:row.filled || [], has_cover:!!row.has_cover, ver:row.ver || 0, sort:row.sort || 0, repo:row.repo || null });
+        wide:row.wide || [], filled:row.filled || [], has_cover:!!row.has_cover, ver:row.ver || 0, sort:row.sort || 0, repo:row.repo || null, order:row.order || null });
     });
     LIST_KEYS.forEach(k => S.venues[k].sort((a, b) => (a.sort || 0) - (b.sort || 0)));
     (d.site || []).forEach(s => { S.site[s.slot] = s.ver || 1; });
