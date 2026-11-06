@@ -1273,7 +1273,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     async init(){ this.token = localStorage.getItem('soone-gh-token') || ''; this.pending = new Map(); this.local = {}; this.dirty = false; this.chain = Promise.resolve(); this.branch = GH.branch || ''; },
     async api(path, opt, tries){
       opt = opt || {}; tries = tries || 0;
-      const r = await fetch('https://api.github.com/repos/' + GH.owner + '/' + GH.repo + path, Object.assign({}, opt, {
+      const r = await fetch('https://api.github.com/repos/' + GH.owner + '/' + GH.repo + path, Object.assign({ cache:'no-store' }, opt, {
         headers: Object.assign({ 'Authorization':'Bearer ' + this.token, 'Accept':'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28' }, opt.headers || {})
       }));
       /* GitHub 속도 제한(한 번에 아주 많이 올릴 때): 안내된 시간만큼 기다렸다가 자동으로 다시 시도 */
@@ -1319,12 +1319,19 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     async session(){ return !!(this.token && this.ok); },
     async signIn(token){ this.token = token; try { await this.check(); } catch(e){ this.token = ''; throw e; } this.ok = true; localStorage.setItem('soone-gh-token', token); },
     async signOut(){ this.token = ''; this.ok = false; localStorage.removeItem('soone-gh-token'); },
-    commit(msg){ this.chain = this.chain.then(() => this._commit(msg)).catch(e => { setStatus(''); fail(e, '사이트에 저장하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.'); }); return this.chain; },
+    commit(msg){ this.chain = this.chain.then(() => this._commitRetry(msg)).catch(e => { setStatus(''); fail(e, '사이트에 저장하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.'); }); return this.chain; },
+    /* 다른 저장과 겹쳐 '최신이 아님'(422)이 나오면 최신 상태를 다시 받아 자동으로 재시도 */
+    async _commitRetry(msg){
+      for(let t = 0; ; t++){
+        try { return await this._commit(msg); }
+        catch(e){ if(e.status === 422 && t < 4){ await new Promise(r => setTimeout(r, 1500 * (t + 1))); continue; } throw e; }
+      }
+    },
     async _commit(msg){
       if(!this.pending.size && !this.dirty) return;
       setStatus('저장 중…');
       const items = Array.from(this.pending.entries()); const wasDirty = this.dirty;
-      const ref = await this.api('/git/ref/heads/' + this.branch);
+      const ref = await this.api('/git/ref/heads/' + this.branch + '?t=' + Date.now());
       const head = await this.api('/git/commits/' + ref.object.sha);
       const tree = [];
       const dels = items.filter(x => !x[1]).map(x => x[0]);
@@ -1358,7 +1365,17 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   };
   function toB64(blob){ return new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(String(fr.result).split(',')[1]); fr.onerror = rej; fr.readAsDataURL(blob); }); }
   function setStatus(t){ S.status = t; const el = document.querySelector('[data-status]'); if(el) el.textContent = t; }
-  const commit = msg => store.commit ? store.commit(msg) : Promise.resolve();
+  /* 짧은 시간에 여러 번 고치면 4초 기다렸다가 한 번에 저장 (GitHub Pages 반영 횟수 절약) */
+  let cTimer = null, cMsgs = [];
+  function commit(msg, now){
+    if(!store.commit) return Promise.resolve();
+    cMsgs.push(msg); clearTimeout(cTimer);
+    const go = () => { const m = cMsgs.join(', '); cMsgs = []; return store.commit(m); };
+    if(now) return go();
+    setStatus('저장 준비 중…'); cTimer = setTimeout(go, 4000);
+    return Promise.resolve();
+  }
+  const flushCommit = () => { if(cMsgs.length){ clearTimeout(cTimer); const m = cMsgs.join(', '); cMsgs = []; return store.commit(m); } return Promise.resolve(); };
 
   /* ── 저장소 ② 로컬 미리보기 (IndexedDB · 이 브라우저에만) ── */
   const LocalStore = {
@@ -1698,11 +1715,11 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       patchFig(v, i);
       if(k % 5 === 4){ try { await store.saveVenue(v); } catch(e){} }
       /* 20장마다 중간 저장 — 휴대폰에서 중간에 끊겨도 그때까지 올린 사진은 남음 */
-      if(k % 20 === 19 && k < files.length - 1){ try { await store.saveVenue(v); } catch(e){} await commit(v.en + ' 사진 ' + (k + 1) + '장까지'); }
+      if(k % 20 === 19 && k < files.length - 1){ try { await store.saveVenue(v); } catch(e){} await commit(v.en + ' 사진 ' + (k + 1) + '장까지', true); }
     }
     try { await store.saveVenue(v); } catch(e){ fail(e); }
     S.busy = false; render();
-    await commit(v.en + ' 사진 ' + (files.length - fails) + '장');
+    await commit(v.en + ' 사진 ' + (files.length - fails) + '장', true);
     try { if(lock) lock.release(); } catch(e){}
     if(fails) alert(fails + '장은 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 다시 올려 주세요)');
   }
@@ -1772,7 +1789,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       else if(act === 'addslots' && v) addSlots(v);
       else if(act === 'cutslots' && v) cutSlots(v);
       else if(act === 'closelogin'){ S.login = false; render(); }
-      else if(act === 'logout'){ (store.chain || Promise.resolve()).then(() => store.signOut()).finally(() => { S.admin = false; S.status = ''; render(); }); }
+      else if(act === 'logout'){ flushCommit().then(() => store.chain || null).then(() => store.signOut()).finally(() => { S.admin = false; S.status = ''; render(); }); }
       return;
     }
     const up = S.admin && e.target.closest('[data-up]');
@@ -1817,7 +1834,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
 
   window.addEventListener('hashchange', () => { const r = parse(); if(r){ render(); checkAdmin(r); } });
   /* 저장이 끝나기 전에 창을 닫으려 하면 알림 */
-  window.addEventListener('beforeunload', e => { if(store.kind === 'github' && (store.pending.size || store.dirty || /저장 중/.test(S.status || ''))){ e.preventDefault(); e.returnValue = ''; } });
+  window.addEventListener('beforeunload', e => { if(store.kind === 'github' && (cMsgs.length || store.pending.size || store.dirty || /저장 중/.test(S.status || ''))){ e.preventDefault(); e.returnValue = ''; } });
 
   async function loadData(){
     const d = await store.load();
