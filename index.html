@@ -1683,6 +1683,8 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     if(need > 0){ for(let k = 0; k < need; k++) empties.push(v.count + k); v.count += need; }
     S.busy = true;
     if(need > 0){ render(); }
+    /* 휴대폰: 올리는 동안 화면이 꺼지지 않게 (지원되는 기기에서) */
+    let lock = null; try { if(navigator.wakeLock) lock = await navigator.wakeLock.request('screen'); } catch(e){}
     let fails = 0;
     for(let k = 0; k < files.length; k++){
       setBulkLabel('업로드 중 · ' + (k + 1) + ' / ' + files.length);
@@ -1695,9 +1697,13 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       } catch(e){ fails++; console.error('[archive]', files[k].name, e); }
       patchFig(v, i);
       if(k % 5 === 4){ try { await store.saveVenue(v); } catch(e){} }
+      /* 20장마다 중간 저장 — 휴대폰에서 중간에 끊겨도 그때까지 올린 사진은 남음 */
+      if(k % 20 === 19 && k < files.length - 1){ try { await store.saveVenue(v); } catch(e){} await commit(v.en + ' 사진 ' + (k + 1) + '장까지'); }
     }
     try { await store.saveVenue(v); } catch(e){ fail(e); }
-    S.busy = false; render(); commit(v.en + ' 사진 ' + (files.length - fails) + '장');
+    S.busy = false; render();
+    await commit(v.en + ' 사진 ' + (files.length - fails) + '장');
+    try { if(lock) lock.release(); } catch(e){}
     if(fails) alert(fails + '장은 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 다시 올려 주세요)');
   }
   async function flip(v, i){
