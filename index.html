@@ -1309,7 +1309,15 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       return { venues:[], site:[] };
     },
     saveVenue(){ this.dirty = true; }, deleteVenue(){ this.dirty = true; }, saveSite(){ this.dirty = true; },
-    async put(path, blob){ this.pending.set(path, blob); if(this.local[path]) URL.revokeObjectURL(this.local[path]); this.local[path] = URL.createObjectURL(blob); },
+    /* 사진은 줄이자마자 바로 GitHub에 올려 두고(메모리에 쌓지 않음), 목록 저장(커밋) 때는 주소만 묶음 */
+    async put(path, blob, preview){
+      const b = await this.api('/git/blobs', { method:'POST', body:JSON.stringify({ content:await toB64(blob), encoding:'base64' }) });
+      this.pending.set(path, b.sha);
+      if(this.local[path]) URL.revokeObjectURL(this.local[path]);
+      this.local[path] = URL.createObjectURL(preview || blob);
+      const gap = 800 - (Date.now() - (this.lastBlob || 0)); this.lastBlob = Date.now();
+      if(gap > 0) await new Promise(r => setTimeout(r, gap));
+    },
     async remove(paths){ paths.forEach(p => { this.pending.set(p, null); delete this.local[p]; }); },
     url(path, ver){
       if(this.local[path]) return this.local[path];
@@ -1340,18 +1348,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
         const have = new Set((t.tree || []).map(x => x.path));
         dels.forEach(p => { if(have.has(p)) tree.push({ path:p, mode:'100644', type:'blob', sha:null }); });
       }
-      const ups = items.filter(x => x[1]);
-      /* 장수 제한 없음 — 많이 올릴 때는 GitHub 제한(분당 약 80건)에 걸리지 않게 간격을 두고 3장씩 저장 */
-      const pace = ups.length > 60 ? 900 : 0;
-      for(let k = 0; k < ups.length; k += 3){
-        const t0 = Date.now();
-        await Promise.all(ups.slice(k, k + 3).map(async x => {
-          const b = await this.api('/git/blobs', { method:'POST', body:JSON.stringify({ content:await toB64(x[1]), encoding:'base64' }) });
-          tree.push({ path:x[0], mode:'100644', type:'blob', sha:b.sha });
-        }));
-        if(ups.length > 3) setStatus('저장 중… ' + Math.min(k + 3, ups.length) + ' / ' + ups.length);
-        const gap = pace * 3 - (Date.now() - t0); if(gap > 0) await new Promise(res => setTimeout(res, gap));
-      }
+      items.filter(x => x[1]).forEach(x => tree.push({ path:x[0], mode:'100644', type:'blob', sha:x[1] }));
       const all = []; LIST_KEYS.forEach(k => S.venues[k].forEach(v => all.push({ list_key:v.list_key, id:v.id, en:v.en, kr:v.kr, count:v.count, wide:v.wide, filled:v.filled, has_cover:v.has_cover, ver:v.ver, sort:v.sort })));
       const data = JSON.stringify({ venues:all, site:Object.keys(S.site).map(slot => ({ slot, ver:S.site[slot] })) }, null, 1);
       tree.push({ path:DATA_PATH, mode:'100644', type:'blob', content:data });
@@ -1425,20 +1422,36 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   const store = (GH.owner && GH.repo) ? GitHubStore : LocalStore;
 
   /* ── 업로드 전 리사이즈: 긴 변 2000px · JPEG 0.85 ── */
+  /* 휴대폰(사파리)은 캔버스 메모리 한도가 작아서, 캔버스 하나를 돌려 쓰고 매번 비움 */
+  const cv = document.createElement('canvas');
+  const toBlobP = (c, q) => new Promise(r => c.toBlob(r, 'image/jpeg', q));
   async function compress(file){
-    let src, w, h;
+    let src, w, h, url = null;
     try { src = await createImageBitmap(file, { imageOrientation:'from-image' }); w = src.width; h = src.height; }
     catch(e){
-      src = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('decode')); im.src = URL.createObjectURL(file); });
+      url = URL.createObjectURL(file);
+      src = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('decode')); im.src = url; });
       w = src.naturalWidth; h = src.naturalHeight;
     }
-    const k = Math.min(1, 2000 / Math.max(w, h)); // 긴 변 2000px
-    const cw = Math.round(w * k), ch = Math.round(h * k);
-    const c = document.createElement('canvas'); c.width = cw; c.height = ch;
-    const ctx = c.getContext('2d'); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, cw, ch); ctx.drawImage(src, 0, 0, cw, ch);
-    const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9));
-    if(!blob) throw new Error('encode');
-    return { blob, wide: cw > ch };
+    try {
+      const k = Math.min(1, 2000 / Math.max(w, h)); // 긴 변 2000px
+      const cw = Math.round(w * k), ch = Math.round(h * k);
+      cv.width = cw; cv.height = ch;
+      let ctx = cv.getContext('2d'); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, cw, ch); ctx.drawImage(src, 0, 0, cw, ch);
+      const blob = await toBlobP(cv, 0.9);
+      if(!blob) throw new Error('encode');
+      /* 편집 화면 표시용 작은 미리보기 (휴대폰 메모리 절약) */
+      const pk = Math.min(1, 900 / Math.max(cw, ch)), pw = Math.round(cw * pk), ph = Math.round(ch * pk);
+      const tmp = document.createElement('canvas'); tmp.width = pw; tmp.height = ph;
+      tmp.getContext('2d').drawImage(cv, 0, 0, pw, ph);
+      const preview = await toBlobP(tmp, 0.8);
+      tmp.width = tmp.height = 0;
+      return { blob, preview, wide: cw > ch };
+    } finally {
+      cv.width = cv.height = 1;
+      if(src && src.close) src.close();
+      if(url) URL.revokeObjectURL(url);
+    }
   }
 
   /* ── 라우팅 ── */
@@ -1531,7 +1544,8 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
         '<a class="ar-vname" href="' + href + '"><span class="ar-ven">' + esc(v.en || v.kr) + '</span>' + (v.en && v.kr ? '<span class="ar-vkr">' + esc(v.kr) + '</span>' : '') + '</a>' +
         '<a class="ar-lab ar-ul ar-view" href="' + href + '">View ⟶</a>' +
       '</div>' +
-      (S.admin ? '<button class="ar-del" data-act="delvenue" data-id="' + esc(v.id) + '">삭제</button>' : '') +
+      (S.admin ? '<button class="ar-del" data-act="delvenue" data-id="' + esc(v.id) + '">홀 삭제</button>' +
+        (v.has_cover ? '<button class="ar-del" data-act="delcover" data-id="' + esc(v.id) + '">대표사진 삭제</button>' : '') : '') +
     '</div>';
   }
   function rCategory(r){
@@ -1566,9 +1580,9 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     }
     return '<figure class="ar-fig' + (wide ? ' w' : '') + '" data-fig="' + i + '">' +
       '<div class="ar-slot' + (has ? ' has' : '') + '" data-up="photo" data-i="' + i + '">' +
-        (has ? '<img src="' + esc(src) + '" alt="" decoding="async">' : '<span class="ar-phl">' + pad(i + 1) + '</span>') + '</div>' +
+        (has ? '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' : '<span class="ar-phl">' + pad(i + 1) + '</span>') + '</div>' +
       '<figcaption><span>' + pad(i + 1) + ' / ' + pad(v.count) + '</span><span class="ar-ops">' +
-        (has ? '<button data-act="clear" data-i="' + i + '">비우기</button>' : '') +
+        (has ? '<button data-act="clear" data-i="' + i + '">삭제</button>' : '') +
         '<button data-act="flip" data-i="' + i + '">' + (wide ? '세로로 바꾸기' : '가로로 바꾸기') + '</button>' +
       '</span></figcaption></figure>';
   }
@@ -1594,10 +1608,10 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     '</section>' +
     (S.admin ? '<div class="ar-bulk-w"><div class="ar-bulk" data-up="bulk">' +
         '<span class="ar-lab" data-bulk-t>' + (S.busy ? '업로드 중' : '+ 사진 한번에 올리기') + '</span>' +
-        '<span class="ar-bulk-s">여러 장을 한 번에 끌어다 놓거나 클릭해서 선택하세요.<br>파일 이름 순서대로 빈 칸부터 채워지고, 칸이 모자라면 자동으로 늘어나요.</span>' +
+        '<span class="ar-bulk-s">여러 장을 한 번에 끌어다 놓거나 클릭해서 선택하세요.<br>고른 순서대로 빈 칸부터 채워지고, 칸이 모자라면 자동으로 늘어나요.</span>' +
       '</div></div>' : '') +
     '<section class="ar-photos">' + figs + '</section>' +
-    (S.admin ? '<div class="ar-slots"><button class="ar-b1" data-act="addslots">+ 사진 칸 6개 추가</button><button class="ar-b2" data-act="cutslots">− 6개 줄이기</button></div>' : '') +
+    (S.admin ? '<div class="ar-slots"><button class="ar-b1" data-act="addslots">+ 사진 칸 6개 추가</button><button class="ar-b2" data-act="cutslots">− 6개 줄이기</button><button class="ar-b2" data-act="clearall">사진 전체 삭제</button></div>' : '') +
     '<section class="ar-vfoot">' +
       '<a class="ar-lab ar-ul" href="' + catHref(r) + '">← All venues</a>' +
       (list.length > 1 ? '<a class="ar-next" href="' + venueHref(r, next) + '"><span class="ar-lab">Next venue</span><span class="ar-next-n">' + esc(next.en || next.kr) + ' ⟶</span></a>' : '') +
@@ -1668,17 +1682,17 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     const paths = v.filled.map(i => photoPath(v, i)); if(v.has_cover) paths.push(coverPath(v));
     try { await store.remove(paths); list.splice(list.indexOf(v), 1); await store.deleteVenue(v); }
     catch(e){ fail(e, '삭제하지 못했어요.'); }
-    render(); commit('홀 삭제 ' + v.en);
+    render(); commit('홀 삭제 ' + v.en, true);
   }
   async function uploadCover(v, file, el){
     if(busyGuard()) return; S.busy = true; el.classList.add('ar-wait');
-    try { const { blob } = await compress(file); await store.put(coverPath(v), blob); if(v.has_cover) v.ver = bump(); v.has_cover = true; await store.saveVenue(v); }
+    try { const { blob, preview } = await compress(file); await store.put(coverPath(v), blob, preview); if(v.has_cover) v.ver = bump(); v.has_cover = true; await store.saveVenue(v); }
     catch(e){ fail(e, '사진을 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 올려 주세요)'); }
     S.busy = false; render(); commit('대표사진 ' + v.en);
   }
   async function uploadSite(slot, file, el){
     if(busyGuard()) return; S.busy = true; el.classList.add('ar-wait');
-    try { const { blob } = await compress(file); await store.put(sitePath(slot), blob); S.site[slot] = bump(); await store.saveSite(slot, S.site[slot]); }
+    try { const { blob, preview } = await compress(file); await store.put(sitePath(slot), blob, preview); S.site[slot] = bump(); await store.saveSite(slot, S.site[slot]); }
     catch(e){ fail(e, '사진을 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 올려 주세요)'); }
     S.busy = false; render(); commit('사진 ' + slot);
   }
@@ -1686,7 +1700,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   async function uploadPhoto(v, i, file, el){
     if(busyGuard()) return; S.busy = true; el.classList.add('ar-wait');
     try {
-      const { blob, wide } = await compress(file); await store.put(photoPath(v, i), blob);
+      const { blob, preview, wide } = await compress(file); await store.put(photoPath(v, i), blob, preview);
       if(v.filled.includes(i)) v.ver = bump(); else v.filled.push(i);
       setWide(v, i, wide); await store.saveVenue(v);
     } catch(e){ fail(e, '사진을 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 올려 주세요)'); }
@@ -1694,7 +1708,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   }
   async function bulkUpload(v, files){
     if(busyGuard()) return;
-    files = files.slice().sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric:true }));
+    files = files.slice(); // 고른 순서 그대로
     const empties = []; for(let i = 0; i < v.count; i++) if(!v.filled.includes(i)) empties.push(i);
     const need = files.length - empties.length;
     if(need > 0){ for(let k = 0; k < need; k++) empties.push(v.count + k); v.count += need; }
@@ -1702,20 +1716,20 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     if(need > 0){ render(); }
     /* 휴대폰: 올리는 동안 화면이 꺼지지 않게 (지원되는 기기에서) */
     let lock = null; try { if(navigator.wakeLock) lock = await navigator.wakeLock.request('screen'); } catch(e){}
-    let fails = 0;
+    let fails = 0, lastSave = Date.now();
     for(let k = 0; k < files.length; k++){
       setBulkLabel('업로드 중 · ' + (k + 1) + ' / ' + files.length);
       const i = empties[k];
       const slot = root.querySelector('[data-fig="' + i + '"] .ar-slot'); if(slot) slot.classList.add('ar-wait');
       try {
-        const { blob, wide } = await compress(files[k]); await store.put(photoPath(v, i), blob);
+        const { blob, preview, wide } = await compress(files[k]); await store.put(photoPath(v, i), blob, preview);
         if(!v.filled.includes(i)) v.filled.push(i);
         setWide(v, i, wide);
       } catch(e){ fails++; console.error('[archive]', files[k].name, e); }
       patchFig(v, i);
       if(k % 5 === 4){ try { await store.saveVenue(v); } catch(e){} }
-      /* 20장마다 중간 저장 — 휴대폰에서 중간에 끊겨도 그때까지 올린 사진은 남음 */
-      if(k % 20 === 19 && k < files.length - 1){ try { await store.saveVenue(v); } catch(e){} await commit(v.en + ' 사진 ' + (k + 1) + '장까지', true); }
+      /* 10장마다 중간 저장 — 휴대폰에서 중간에 끊겨도 그때까지 올린 사진은 남음 */
+      if(Date.now() - lastSave > 12000 && k < files.length - 1){ lastSave = Date.now(); try { await store.saveVenue(v); } catch(e){} await commit(v.en + ' 사진 ' + (k + 1) + '장까지', true); }
     }
     try { await store.saveVenue(v); } catch(e){ fail(e); }
     S.busy = false; render();
@@ -1729,10 +1743,23 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     commit('가로/세로 ' + v.en);
   }
   async function clearPhoto(v, i){
-    if(busyGuard() || !confirm('이 사진을 비울까요?')) return;
+    if(busyGuard() || !confirm('이 사진을 삭제할까요?')) return;
     try { await store.remove([photoPath(v, i)]); v.filled = v.filled.filter(x => x !== i); v.ver = bump(); await store.saveVenue(v); }
     catch(e){ fail(e, '사진을 지우지 못했어요.'); }
-    patchFig(v, i); commit('사진 비우기 ' + v.en);
+    patchFig(v, i); commit('사진 삭제 ' + v.en);
+  }
+  async function clearAll(v){
+    if(busyGuard() || !v.filled.length) return;
+    if(!confirm('이 홀의 사진 ' + v.filled.length + '장을 모두 삭제할까요? (대표사진과 홀은 남아요)')) return;
+    try { await store.remove(v.filled.map(i => photoPath(v, i))); v.filled = []; v.wide = []; v.count = 24; v.ver = bump(); await store.saveVenue(v); }
+    catch(e){ fail(e, '사진을 지우지 못했어요.'); }
+    render(); commit('사진 전체 삭제 ' + v.en, true);
+  }
+  async function delCover(id){
+    const v = findVenue(id); if(!v || busyGuard() || !confirm('대표사진을 삭제할까요?')) return;
+    try { await store.remove([coverPath(v)]); v.has_cover = false; v.ver = bump(); await store.saveVenue(v); }
+    catch(e){ fail(e, '대표사진을 지우지 못했어요.'); }
+    render(); commit('대표사진 삭제 ' + v.en);
   }
   async function addSlots(v){ if(busyGuard()) return; v.count += 6; render(); try { await store.saveVenue(v); } catch(e){ fail(e); } commit('칸 추가 ' + v.en); }
   async function cutSlots(v){
@@ -1786,6 +1813,8 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       else if(act === 'delvenue') delVenue(a.dataset.id);
       else if(act === 'flip' && v) flip(v, i);
       else if(act === 'clear' && v) clearPhoto(v, i);
+      else if(act === 'clearall' && v) clearAll(v);
+      else if(act === 'delcover') delCover(a.dataset.id);
       else if(act === 'addslots' && v) addSlots(v);
       else if(act === 'cutslots' && v) cutSlots(v);
       else if(act === 'closelogin'){ S.login = false; render(); }
