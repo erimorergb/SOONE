@@ -558,6 +558,12 @@
   .ar-vgrid[hidden]{display:none;}
   .ar-vtag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7A7267;margin-bottom:-6px;}
   .ar-snone{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;color:#7A7267;padding:8px 0;}
+  /* 관리자 진행 알림 (화면 아래 고정) */
+  .ar-toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,16px);z-index:96;
+    max-width:calc(100% - 32px);padding:13px 22px;background:#393733;color:#F5F2EC;font-family:'Inter','Noto Sans KR',sans-serif;
+    font-size:12.5px;letter-spacing:.03em;line-height:1.5;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;}
+  .ar-toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto;}
+  .ar-toast.done{background:#F5F2EC;color:#393733;border:1px solid #393733;}
 </style>
 <style>/* 메뉴의 𓍯 기호 — 어떤 기기에서도 보이도록 글자 하나만 담은 폰트(Noto Sans Egyptian Hieroglyphs, OFL) */
 @font-face{font-family:'SOONE Hiero';src:url(data:font/woff2;base64,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) format('woff2');unicode-range:U+1336F;}
@@ -567,7 +573,11 @@
    Archive 사진·홀 목록은 이 GitHub 저장소의 archive/ 폴더에 저장됩니다.
    관리자: 사이트 주소 뒤에 #archive?admin → GitHub 토큰으로 로그인 */
 window.SOONE_ARCHIVE_CONFIG = {
-  github: { owner: 'erimorergb', repo: 'SOONE', branch: '' }   // branch 비우면 기본 브랜치 사용
+  github: {
+    owner: 'erimorergb', repo: 'SOONE', branch: '',   // branch 비우면 기본 브랜치 사용
+    /* 사진 전용 저장소 — 이 이름으로 저장소를 만들고 Pages를 켜고 토큰에 추가하면 자동으로 이어서 사용 */
+    photoRepos: ['SOONE-photos-2', 'SOONE-photos-3', 'SOONE-photos-4', 'SOONE-photos-5', 'SOONE-photos-6']
+  }
 };
 </script>
 </head>
@@ -1279,16 +1289,27 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   const sitePath  = slot => 'archive/site/' + slot + '.jpg';
 
   /* ── 저장소 ① GitHub (SOONE 저장소에 바로 저장 · GitHub Pages로 공개) ──
-     방문자: 사이트와 같은 곳의 archive/data.json 과 archive/… 사진을 읽음 (토큰 필요 없음)
-     관리자: GitHub 토큰으로 로그인 → 한 번의 작업(예: 사진 30장 올리기)을 커밋 1개로 저장 */
+     방문자: archive/data.json 과 사진을 GitHub Pages에서 읽음 (토큰 필요 없음)
+     관리자: GitHub 토큰으로 로그인 → 한 번의 작업을 커밋으로 묶어 저장
+     용량: 저장소 하나(Pages 사이트 하나)가 1GB까지라, 사진 전용 저장소(SOONE-photos-2 …)를
+           만들어 두면 앞 저장소가 차는 대로 다음 저장소에 새 홀을 자동으로 저장 */
   const GH = CFG.github || {};
   const DATA_PATH = 'archive/data.json';
+  const MAIN = GH.repo;
+  const PHOTO_REPOS = GH.photoRepos || [];
+  const REPO_LIMIT_MB = 850;          // Pages 1GB 한도 전에 여유를 두고 다음 저장소로
+  const keyOf = (repo, path) => repo + '::' + path;
   const GitHubStore = {
     kind:'github',
-    async init(){ this.token = localStorage.getItem('soone-gh-token') || ''; this.pending = new Map(); this.local = {}; this.dirty = false; this.chain = Promise.resolve(); this.branch = GH.branch || ''; },
+    async init(){
+      this.token = localStorage.getItem('soone-gh-token') || '';
+      this.pending = new Map(); this.local = {}; this.dirty = false; this.chain = Promise.resolve();
+      this.info = {}; this.added = {};
+    },
     async api(path, opt, tries){
       opt = opt || {}; tries = tries || 0;
-      const r = await fetch('https://api.github.com/repos/' + GH.owner + '/' + GH.repo + path, Object.assign({ cache:'no-store' }, opt, {
+      const repo = opt.repo || MAIN;
+      const r = await fetch('https://api.github.com/repos/' + GH.owner + '/' + repo + path, Object.assign({ cache:'no-store' }, opt, {
         headers: Object.assign({ 'Authorization':'Bearer ' + this.token, 'Accept':'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28' }, opt.headers || {})
       }));
       /* GitHub 속도 제한(한 번에 아주 많이 올릴 때): 안내된 시간만큼 기다렸다가 자동으로 다시 시도 */
@@ -1308,16 +1329,32 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       return r.status === 204 ? null : (opt.raw ? r.text() : r.json());
     },
     async check(){
-      const repo = await this.api('');
-      if(!repo.permissions || !repo.permissions.push) throw new Error('no-push');
-      if(!this.branch) this.branch = repo.default_branch || 'main';
-      this.sizeMB = Math.round((repo.size || 0) / 1024);
+      const main = await this.api('');
+      if(!main.permissions || !main.permissions.push) throw new Error('no-push');
+      this.info[MAIN] = { branch: GH.branch || main.default_branch || 'main', sizeMB: Math.round((main.size || 0) / 1024) };
+      /* 사진 전용 저장소: 만들어져 있고 토큰 권한이 있는 것만 사용 */
+      for(const name of PHOTO_REPOS){
+        try {
+          const r = await this.api('', { repo:name });
+          if(r.permissions && r.permissions.push) this.info[name] = { branch: r.default_branch || 'main', sizeMB: Math.round((r.size || 0) / 1024) };
+        } catch(e){ /* 아직 없는 저장소 */ }
+      }
     },
+    repos(){ return [MAIN].concat(PHOTO_REPOS.filter(n => this.info[n])); },
+    usedMB(name){ return ((this.info[name] && this.info[name].sizeMB) || 0) + (this.added[name] || 0); },
+    /* 새 홀을 저장할 저장소: 여유가 있는 첫 번째 저장소 */
+    pickRepo(){
+      const rs = this.repos();
+      for(const n of rs){ if(this.usedMB(n) < REPO_LIMIT_MB) return n === MAIN ? null : n; }
+      const last = rs[rs.length - 1]; return last === MAIN ? null : last;
+    },
+    get sizeMB(){ if(!this.info[MAIN]) return null; return Math.round(this.repos().reduce((s, n) => s + this.usedMB(n), 0)); },
+    get capacityGB(){ return this.repos().length; },
     async load(){
       if(this.token){
         try {
           await this.check(); this.ok = true;
-          const txt = await this.api('/contents/' + DATA_PATH + '?ref=' + encodeURIComponent(this.branch), { headers:{ 'Accept':'application/vnd.github.raw' }, raw:true });
+          const txt = await this.api('/contents/' + DATA_PATH + '?ref=' + encodeURIComponent(this.info[MAIN].branch), { headers:{ 'Accept':'application/vnd.github.raw' }, raw:true });
           return JSON.parse(txt);
         } catch(e){ if(e.status === 404 && this.ok) return { venues:[], site:[] }; this.ok = false; console.warn('[archive] 관리자 확인 실패', e); }
       }
@@ -1326,58 +1363,86 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     },
     saveVenue(){ this.dirty = true; }, deleteVenue(){ this.dirty = true; }, saveSite(){ this.dirty = true; },
     /* 사진은 줄이자마자 바로 GitHub에 올려 두고(메모리에 쌓지 않음), 목록 저장(커밋) 때는 주소만 묶음 */
-    async put(path, blob, preview){
-      const b = await this.api('/git/blobs', { method:'POST', body:JSON.stringify({ content:await toB64(blob), encoding:'base64' }) });
-      this.pending.set(path, b.sha);
-      if(this.local[path]) URL.revokeObjectURL(this.local[path]);
-      this.local[path] = URL.createObjectURL(preview || blob);
+    async put(path, blob, preview, repo){
+      repo = repo || MAIN;
+      const b = await this.api('/git/blobs', { method:'POST', repo, body:JSON.stringify({ content:await toB64(blob), encoding:'base64' }) });
+      this.pending.set(keyOf(repo, path), { repo, path, sha:b.sha });
+      this.added[repo] = (this.added[repo] || 0) + blob.size / 1048576;
+      const k = keyOf(repo, path);
+      if(this.local[k]) URL.revokeObjectURL(this.local[k]);
+      this.local[k] = URL.createObjectURL(preview || blob);
       const gap = 800 - (Date.now() - (this.lastBlob || 0)); this.lastBlob = Date.now();
       if(gap > 0) await new Promise(r => setTimeout(r, gap));
     },
-    async remove(paths){ paths.forEach(p => { this.pending.set(p, null); delete this.local[p]; }); },
-    url(path, ver){
-      if(this.local[path]) return this.local[path];
-      const base = (S.admin && this.branch) ? 'https://raw.githubusercontent.com/' + GH.owner + '/' + GH.repo + '/' + this.branch + '/' : '';
-      return base + path + (ver ? '?v=' + ver : '');
+    async remove(paths, repo){ repo = repo || MAIN; paths.forEach(p => { this.pending.set(keyOf(repo, p), { repo, path:p, sha:null }); delete this.local[keyOf(repo, p)]; }); },
+    url(path, ver, repo){
+      repo = repo || MAIN;
+      const k = keyOf(repo, path);
+      if(this.local[k]) return this.local[k];
+      const q = ver ? '?v=' + ver : '';
+      if(S.admin && this.info[repo]) return 'https://raw.githubusercontent.com/' + GH.owner + '/' + repo + '/' + this.info[repo].branch + '/' + path + q;
+      if(repo === MAIN) return path + q;
+      return 'https://' + GH.owner.toLowerCase() + '.github.io/' + repo + '/' + path + q;
     },
     async session(){ return !!(this.token && this.ok); },
     async signIn(token){ this.token = token; try { await this.check(); } catch(e){ this.token = ''; throw e; } this.ok = true; localStorage.setItem('soone-gh-token', token); },
     async signOut(){ this.token = ''; this.ok = false; localStorage.removeItem('soone-gh-token'); },
-    commit(msg){ this.chain = this.chain.then(() => this._commitRetry(msg)).catch(e => { setStatus(''); fail(e, '사이트에 저장하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.'); }); return this.chain; },
-    /* 다른 저장과 겹쳐 '최신이 아님'(422)이 나오면 최신 상태를 다시 받아 자동으로 재시도 */
-    async _commitRetry(msg){
-      for(let t = 0; ; t++){
-        try { return await this._commit(msg); }
-        catch(e){ if(e.status === 422 && t < 4){ await new Promise(r => setTimeout(r, 1500 * (t + 1))); continue; } throw e; }
-      }
-    },
+    commit(msg){ this.chain = this.chain.then(() => this._commit(msg)).catch(e => { setStatus(''); fail(e, '사이트에 저장하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.'); }); return this.chain; },
+    /* 사진 저장소들 먼저, 홀 목록(data.json)은 마지막에 본 저장소에 */
     async _commit(msg){
       if(!this.pending.size && !this.dirty) return;
       setStatus('저장 중…');
-      const items = Array.from(this.pending.entries()); const wasDirty = this.dirty;
-      const ref = await this.api('/git/ref/heads/' + this.branch + '?t=' + Date.now());
-      const head = await this.api('/git/commits/' + ref.object.sha);
+      const items = Array.from(this.pending.values()); const wasDirty = this.dirty;
+      const byRepo = {}; items.forEach(x => (byRepo[x.repo] = byRepo[x.repo] || []).push(x));
+      for(const repo of Object.keys(byRepo)){ if(repo !== MAIN) await this._commitRepoRetry(repo, byRepo[repo], msg, false); }
+      await this._commitRepoRetry(MAIN, byRepo[MAIN] || [], msg, true);
+      items.forEach(x => { const k = keyOf(x.repo, x.path); if(this.pending.get(k) === x) this.pending.delete(k); });
+      if(wasDirty) this.dirty = false;
+      setStatus('저장됨 · 1~2분 뒤 사이트에 반영돼요'); toast('✓ 저장 완료 · 1~2분 뒤 손님 화면에 보여요', 'done');
+    },
+    /* 다른 저장과 겹쳐 '최신이 아님'(422)이 나오면 최신 상태를 다시 받아 자동으로 재시도 */
+    async _commitRepoRetry(repo, items, msg, withData){
+      for(let t = 0; ; t++){
+        try { return await this._commitRepo(repo, items, msg, withData); }
+        catch(e){ if(e.status === 422 && t < 4){ await new Promise(r => setTimeout(r, 1500 * (t + 1))); continue; } throw e; }
+      }
+    },
+    async _commitRepo(repo, items, msg, withData){
+      if(!items.length && !withData) return;
+      const branch = (this.info[repo] && this.info[repo].branch) || 'main';
+      const ref = await this.api('/git/ref/heads/' + branch + '?t=' + Date.now(), { repo });
+      const head = await this.api('/git/commits/' + ref.object.sha, { repo });
       const tree = [];
-      const dels = items.filter(x => !x[1]).map(x => x[0]);
+      const dels = items.filter(x => !x.sha).map(x => x.path);
       if(dels.length){
-        const t = await this.api('/git/trees/' + head.tree.sha + '?recursive=1');
+        const t = await this.api('/git/trees/' + head.tree.sha + '?recursive=1', { repo });
         const have = new Set((t.tree || []).map(x => x.path));
         dels.forEach(p => { if(have.has(p)) tree.push({ path:p, mode:'100644', type:'blob', sha:null }); });
       }
-      items.filter(x => x[1]).forEach(x => tree.push({ path:x[0], mode:'100644', type:'blob', sha:x[1] }));
-      const all = []; LIST_KEYS.forEach(k => S.venues[k].forEach(v => all.push({ list_key:v.list_key, id:v.id, en:v.en, kr:v.kr, count:v.count, wide:v.wide, filled:v.filled, has_cover:v.has_cover, ver:v.ver, sort:v.sort })));
-      const data = JSON.stringify({ venues:all, site:Object.keys(S.site).map(slot => ({ slot, ver:S.site[slot] })) }, null, 1);
-      tree.push({ path:DATA_PATH, mode:'100644', type:'blob', content:data });
-      const nt = await this.api('/git/trees', { method:'POST', body:JSON.stringify({ base_tree:head.tree.sha, tree }) });
-      const c = await this.api('/git/commits', { method:'POST', body:JSON.stringify({ message:'Archive: ' + (msg || '업데이트'), tree:nt.sha, parents:[ref.object.sha] }) });
-      await this.api('/git/refs/heads/' + this.branch, { method:'PATCH', body:JSON.stringify({ sha:c.sha }) });
-      items.forEach(x => { if(this.pending.get(x[0]) === x[1]) this.pending.delete(x[0]); });
-      if(wasDirty) this.dirty = false;
-      setStatus('저장됨 · 1~2분 뒤 사이트에 반영돼요');
+      items.filter(x => x.sha).forEach(x => tree.push({ path:x.path, mode:'100644', type:'blob', sha:x.sha }));
+      if(withData){
+        const all = []; LIST_KEYS.forEach(k => S.venues[k].forEach(v => { const o = { list_key:v.list_key, id:v.id, en:v.en, kr:v.kr, count:v.count, wide:v.wide, filled:v.filled, has_cover:v.has_cover, ver:v.ver, sort:v.sort }; if(v.repo) o.repo = v.repo; all.push(o); }));
+        const data = JSON.stringify({ venues:all, site:Object.keys(S.site).map(slot => ({ slot, ver:S.site[slot] })) }, null, 1);
+        tree.push({ path:DATA_PATH, mode:'100644', type:'blob', content:data });
+      }
+      if(!tree.length) return;
+      const nt = await this.api('/git/trees', { method:'POST', repo, body:JSON.stringify({ base_tree:head.tree.sha, tree }) });
+      const c = await this.api('/git/commits', { method:'POST', repo, body:JSON.stringify({ message:'Archive: ' + (msg || '업데이트'), tree:nt.sha, parents:[ref.object.sha] }) });
+      await this.api('/git/refs/heads/' + branch, { method:'PATCH', repo, body:JSON.stringify({ sha:c.sha }) });
     }
   };
   function toB64(blob){ return new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(String(fr.result).split(',')[1]); fr.onerror = rej; fr.readAsDataURL(blob); }); }
-  function setStatus(t){ S.status = t; const el = document.querySelector('[data-status]'); if(el) el.textContent = t; }
+  function setStatus(t){ S.status = t; const el = document.querySelector('[data-status]'); if(el) el.textContent = t; if(t && !/^저장됨/.test(t)) toast(t); }
+  /* 화면 아래쪽 고정 알림 — 어디까지 스크롤해 있어도 진행 상황과 '저장 완료'가 보이게 */
+  const toastEl = document.createElement('div'); toastEl.className = 'ar-toast'; toastEl.setAttribute('role', 'status'); document.body.appendChild(toastEl);
+  let toastTimer = null;
+  function toast(t, kind){
+    if(!S.admin){ toastEl.classList.remove('show'); return; }
+    toastEl.textContent = t; toastEl.classList.add('show'); toastEl.classList.toggle('done', kind === 'done');
+    clearTimeout(toastTimer);
+    if(kind === 'done') toastTimer = setTimeout(() => toastEl.classList.remove('show'), 7000);
+  }
+  toastEl.addEventListener('click', () => { if(toastEl.classList.contains('done')) toastEl.classList.remove('show'); });
   /* 짧은 시간에 여러 번 고치면 4초 기다렸다가 한 번에 저장 (GitHub Pages 반영 횟수 절약) */
   let cTimer = null, cMsgs = [];
   function commit(msg, now){
@@ -1517,7 +1582,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   function catCoverSrc(c){
     const own = siteSrc('cover-' + c.key); if(own) return own;
     const keys = c.key === 'preveil' ? ['preveil'] : ARTISTS.map(a => c.key + '-' + a.key);
-    for(const k of keys){ const v = S.venues[k].find(x => x.has_cover); if(v) return store.url(coverPath(v), v.ver); }
+    for(const k of keys){ const v = S.venues[k].find(x => x.has_cover); if(v) return store.url(coverPath(v), v.ver, v.repo); }
     return '';
   }
 
@@ -1551,7 +1616,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   /* ── 화면 ② 카테고리 ── */
   function vCard(r, v){
     const href = venueHref(r, v);
-    const src = v.has_cover ? store.url(coverPath(v), v.ver) : '';
+    const src = v.has_cover ? store.url(coverPath(v), v.ver, v.repo) : '';
     const cover = S.admin
       ? box(src, 'data-up="cover" data-id="' + esc(v.id) + '"', 'Venue cover')
       : '<a class="ar-cover-a" href="' + href + '" aria-label="Open venue">' + box(src) + '</a>';
@@ -1595,7 +1660,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   /* ── 화면 ③ 예식홀 ── */
   function figHTML(v, i, n, total){
     const wide = v.wide.includes(i), has = v.filled.includes(i);
-    const src = has ? store.url(photoPath(v, i), v.ver) : '';
+    const src = has ? store.url(photoPath(v, i), v.ver, v.repo) : '';
     if(!S.admin){
       return '<figure class="ar-fig reveal' + (wide ? ' w' : '') + '"><img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' +
         '<figcaption><span>' + pad(n) + ' / ' + pad(total) + '</span></figcaption></figure>';
@@ -1646,8 +1711,8 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     return '<div class="ar-top"><a class="ar-brand" href="#archive">SOON:E ARCHIVE</a>' + adm + '</div>';
   }
   function usage(){
-    const mb = store.sizeMB, pct = Math.round(mb / 1024 * 100);
-    return '사용량 ' + (mb >= 1024 ? (mb / 1024).toFixed(1) + 'GB' : mb + 'MB') + ' / 1GB' + (pct >= 80 ? ' · 저장소 추가가 필요해요' : '');
+    const mb = store.sizeMB, cap = store.capacityGB || 1, pct = Math.round(mb / (cap * 1024) * 100);
+    return '사용량 ' + (mb >= 1024 ? (mb / 1024).toFixed(1) + 'GB' : mb + 'MB') + ' / ' + cap + 'GB' + (pct >= 80 ? ' · 사진 저장소 추가가 필요해요' : '');
   }
   function rLogin(){
     if(!S.login) return '';
@@ -1677,7 +1742,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     const f = root.querySelector('[data-form="login"] input'); if(f) f.focus();
   }
   function patchFig(v, i){ const f = root.querySelector('[data-fig="' + i + '"]'); if(f) f.outerHTML = figHTML(v, i); }
-  function setBulkLabel(t){ const el = root.querySelector('[data-bulk-t]'); if(el) el.textContent = t; }
+  function setBulkLabel(t){ const el = root.querySelector('[data-bulk-t]'); if(el) el.textContent = t; if(/업로드 중/.test(t)) toast(t.replace('업로드 중', '사진 올리는 중')); }
   function fail(err, msg){ console.error('[archive]', err); alert((msg || '저장하지 못했어요. 잠시 후 다시 시도해 주세요.') + '\n(' + (err && err.message || err) + ')'); }
   function busyGuard(){ if(S.busy){ alert('업로드가 끝난 뒤 다시 시도해 주세요.'); return true; } return false; }
   const bump = () => Date.now();
@@ -1697,6 +1762,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     if(kr && !en){ alert('영문 표기도 함께 입력해 주세요.'); return; }
     const v = { list_key:r.lk, id:slugify(en, list), en, kr, count:24, wide:[], filled:[], has_cover:false, ver:0,
       sort:list.reduce((m, x) => Math.max(m, x.sort || 0), 0) + 1 };
+    const rp = store.pickRepo ? store.pickRepo() : null; if(rp) v.repo = rp;
     list.push(v);
     try { await store.saveVenue(v); } catch(e){ list.splice(list.indexOf(v), 1); fail(e); }
     render(); commit('홀 추가 ' + v.en);
@@ -1706,13 +1772,13 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     const list = S.venues[S.route.lk], v = list.find(x => x.id === id); if(!v) return;
     if(!confirm('이 예식홀을 삭제할까요?')) return;
     const paths = v.filled.map(i => photoPath(v, i)); if(v.has_cover) paths.push(coverPath(v));
-    try { await store.remove(paths); list.splice(list.indexOf(v), 1); await store.deleteVenue(v); }
+    try { await store.remove(paths, v.repo); list.splice(list.indexOf(v), 1); await store.deleteVenue(v); }
     catch(e){ fail(e, '삭제하지 못했어요.'); }
     render(); commit('홀 삭제 ' + v.en, true);
   }
   async function uploadCover(v, file, el){
     if(busyGuard()) return; S.busy = true; el.classList.add('ar-wait');
-    try { const { blob, preview } = await compress(file, 1400); await store.put(coverPath(v), blob, preview); if(v.has_cover) v.ver = bump(); v.has_cover = true; await store.saveVenue(v); }
+    try { const { blob, preview } = await compress(file, 1400); await store.put(coverPath(v), blob, preview, v.repo); if(v.has_cover) v.ver = bump(); v.has_cover = true; await store.saveVenue(v); }
     catch(e){ fail(e, '사진을 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 올려 주세요)'); }
     S.busy = false; render(); commit('대표사진 ' + v.en);
   }
@@ -1726,7 +1792,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   async function uploadPhoto(v, i, file, el){
     if(busyGuard()) return; S.busy = true; el.classList.add('ar-wait');
     try {
-      const { blob, preview, wide } = await compress(file); await store.put(photoPath(v, i), blob, preview);
+      const { blob, preview, wide } = await compress(file); await store.put(photoPath(v, i), blob, preview, v.repo);
       if(v.filled.includes(i)) v.ver = bump(); else v.filled.push(i);
       setWide(v, i, wide); await store.saveVenue(v);
     } catch(e){ fail(e, '사진을 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 올려 주세요)'); }
@@ -1748,7 +1814,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       const i = empties[k];
       const slot = root.querySelector('[data-fig="' + i + '"] .ar-slot'); if(slot) slot.classList.add('ar-wait');
       try {
-        const { blob, preview, wide } = await compress(files[k]); await store.put(photoPath(v, i), blob, preview);
+        const { blob, preview, wide } = await compress(files[k]); await store.put(photoPath(v, i), blob, preview, v.repo);
         if(!v.filled.includes(i)) v.filled.push(i);
         setWide(v, i, wide);
       } catch(e){ fails++; console.error('[archive]', files[k].name, e); }
@@ -1770,20 +1836,20 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   }
   async function clearPhoto(v, i){
     if(busyGuard() || !confirm('이 사진을 삭제할까요?')) return;
-    try { await store.remove([photoPath(v, i)]); v.filled = v.filled.filter(x => x !== i); v.ver = bump(); await store.saveVenue(v); }
+    try { await store.remove([photoPath(v, i)], v.repo); v.filled = v.filled.filter(x => x !== i); v.ver = bump(); await store.saveVenue(v); }
     catch(e){ fail(e, '사진을 지우지 못했어요.'); }
     patchFig(v, i); commit('사진 삭제 ' + v.en);
   }
   async function clearAll(v){
     if(busyGuard() || !v.filled.length) return;
     if(!confirm('이 홀의 사진 ' + v.filled.length + '장을 모두 삭제할까요? (대표사진과 홀은 남아요)')) return;
-    try { await store.remove(v.filled.map(i => photoPath(v, i))); v.filled = []; v.wide = []; v.count = 24; v.ver = bump(); await store.saveVenue(v); }
+    try { await store.remove(v.filled.map(i => photoPath(v, i)), v.repo); v.filled = []; v.wide = []; v.count = 24; v.ver = bump(); await store.saveVenue(v); }
     catch(e){ fail(e, '사진을 지우지 못했어요.'); }
     render(); commit('사진 전체 삭제 ' + v.en, true);
   }
   async function delCover(id){
     const v = findVenue(id); if(!v || busyGuard() || !confirm('대표사진을 삭제할까요?')) return;
-    try { await store.remove([coverPath(v)]); v.has_cover = false; v.ver = bump(); await store.saveVenue(v); }
+    try { await store.remove([coverPath(v)], v.repo); v.has_cover = false; v.ver = bump(); await store.saveVenue(v); }
     catch(e){ fail(e, '대표사진을 지우지 못했어요.'); }
     render(); commit('대표사진 삭제 ' + v.en);
   }
@@ -1794,7 +1860,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     const gone = v.filled.filter(i => i >= nc);
     if(gone.length && !confirm('줄어드는 칸에 사진 ' + gone.length + '장이 있어요. 함께 지우고 줄일까요?')) return;
     try {
-      await store.remove(gone.map(i => photoPath(v, i)));
+      await store.remove(gone.map(i => photoPath(v, i)), v.repo);
       v.filled = v.filled.filter(i => i < nc); v.wide = v.wide.filter(i => i < nc); v.count = nc;
       if(gone.length) v.ver = bump();
       await store.saveVenue(v);
@@ -1919,7 +1985,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     (d.venues || []).forEach(row => {
       if(!S.venues[row.list_key]) return;
       S.venues[row.list_key].push({ list_key:row.list_key, id:row.id, en:row.en || '', kr:row.kr || '', count:row.count || 24,
-        wide:row.wide || [], filled:row.filled || [], has_cover:!!row.has_cover, ver:row.ver || 0, sort:row.sort || 0 });
+        wide:row.wide || [], filled:row.filled || [], has_cover:!!row.has_cover, ver:row.ver || 0, sort:row.sort || 0, repo:row.repo || null });
     });
     LIST_KEYS.forEach(k => S.venues[k].sort((a, b) => (a.sort || 0) - (b.sort || 0)));
     (d.site || []).forEach(s => { S.site[s.slot] = s.ver || 1; });
