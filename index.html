@@ -1300,6 +1300,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       const repo = await this.api('');
       if(!repo.permissions || !repo.permissions.push) throw new Error('no-push');
       if(!this.branch) this.branch = repo.default_branch || 'main';
+      this.sizeMB = Math.round((repo.size || 0) / 1024);
     },
     async load(){
       if(this.token){
@@ -1429,7 +1430,8 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   /* 휴대폰(사파리)은 캔버스 메모리 한도가 작아서, 캔버스 하나를 돌려 쓰고 매번 비움 */
   const cv = document.createElement('canvas');
   const toBlobP = (c, q) => new Promise(r => c.toBlob(r, 'image/jpeg', q));
-  async function compress(file){
+  async function compress(file, maxSide){
+    maxSide = maxSide || 2000;
     let src, w, h, url = null;
     try { src = await createImageBitmap(file, { imageOrientation:'from-image' }); w = src.width; h = src.height; }
     catch(e){
@@ -1438,7 +1440,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       w = src.naturalWidth; h = src.naturalHeight;
     }
     try {
-      const k = Math.min(1, 2000 / Math.max(w, h)); // 긴 변 2000px
+      const k = Math.min(1, maxSide / Math.max(w, h)); // 사진 긴 변 2000px, 대표사진 1400px
       const cw = Math.round(w * k), ch = Math.round(h * k);
       cv.width = cw; cv.height = ch;
       let ctx = cv.getContext('2d'); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, cw, ch); ctx.drawImage(src, 0, 0, cw, ch);
@@ -1491,7 +1493,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   function siteSrc(slot){ return S.site[slot] ? store.url(sitePath(slot), S.site[slot]) : (SITE_DEFAULT[slot] || ''); }
   function box(src, upAttrs, label){
     const up = S.admin && upAttrs ? ' ' + upAttrs : '';
-    const inner = src ? '<img src="' + esc(src) + '" alt="" decoding="async">' : (S.admin && upAttrs ? '<span class="ar-phl">' + esc(label) + '</span>' : '');
+    const inner = src ? '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' : (S.admin && upAttrs ? '<span class="ar-phl">' + esc(label) + '</span>' : '');
     return '<div class="ar-ph"' + up + '>' + inner + '</div>';
   }
   /* 올린 사진을 자르지 않고 원래 비율 그대로 보여 주는 칸 (비어 있을 때만 ratio 비율의 자리 표시) */
@@ -1625,9 +1627,13 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   }
 
   function rTop(){
-    const adm = !S.admin ? '' : '<div class="ar-adm">' + (store.kind === 'local' ? '<span>로컬 미리보기 · 이 브라우저에만 저장</span>' : '<span>Admin</span><span data-status>' + esc(S.status || '') + '</span>') +
+    const adm = !S.admin ? '' : '<div class="ar-adm">' + (store.kind === 'local' ? '<span>로컬 미리보기 · 이 브라우저에만 저장</span>' : '<span>Admin</span>' + (store.sizeMB != null ? '<span title="GitHub 저장소 사용량 (권장 1GB)">' + usage() + '</span>' : '') + '<span data-status>' + esc(S.status || '') + '</span>') +
       '<button data-act="logout">' + (store.kind === 'local' ? '편집 끝내기' : '로그아웃') + '</button></div>';
     return '<div class="ar-top"><a class="ar-brand" href="#archive">SOON:E ARCHIVE</a>' + adm + '</div>';
+  }
+  function usage(){
+    const mb = store.sizeMB, pct = Math.round(mb / 1024 * 100);
+    return '사용량 ' + (mb >= 1024 ? (mb / 1024).toFixed(1) + 'GB' : mb + 'MB') + ' / 1GB' + (pct >= 80 ? ' · 저장소 추가가 필요해요' : '');
   }
   function rLogin(){
     if(!S.login) return '';
@@ -1692,7 +1698,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   }
   async function uploadCover(v, file, el){
     if(busyGuard()) return; S.busy = true; el.classList.add('ar-wait');
-    try { const { blob, preview } = await compress(file); await store.put(coverPath(v), blob, preview); if(v.has_cover) v.ver = bump(); v.has_cover = true; await store.saveVenue(v); }
+    try { const { blob, preview } = await compress(file, 1400); await store.put(coverPath(v), blob, preview); if(v.has_cover) v.ver = bump(); v.has_cover = true; await store.saveVenue(v); }
     catch(e){ fail(e, '사진을 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 올려 주세요)'); }
     S.busy = false; render(); commit('대표사진 ' + v.en);
   }
