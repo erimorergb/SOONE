@@ -5,10 +5,24 @@
    "id": "chapel-in-seocho",
    "en": "Chapel in Seocho",
    "kr": "서초동 성당",
-   "count": 24,
+   "count": 42,
    "wide": [],
-   "filled": [],
-   "order": [],
+   "filled": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "order": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
    "has_cover": true,
    "ver": 0,
    "sort": 1
