@@ -1977,7 +1977,12 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     if(t) t.innerHTML = capHTML(c); if(l) l.textContent = c.line;
   }
   /* 마우스를 올리면 그 무드가 표시되고, 떼면 다시 자동으로 넘어감 */
-  root.addEventListener('mouseover', e => { const h = e.target.closest('[data-hover]'); if(h){ S.hoverLock = true; setHover(h.dataset.hover); } else S.hoverLock = false; });
+  // 마우스로 올렸을 때만 멈춤 (터치 탭은 멈춤을 걸지 않음) — 줄을 벗어나거나 화면을 떠나면 다시 순환
+  root.addEventListener('pointerover', e => { if(e.pointerType !== 'mouse') return; const h = e.target.closest('[data-hover]'); if(h){ S.hoverLock = true; setHover(h.dataset.hover); } else S.hoverLock = false; });
+  root.addEventListener('pointerout', e => { if(e.pointerType !== 'mouse') return; const h = e.target.closest('[data-hover]'); if(h && !h.contains(e.relatedTarget)) S.hoverLock = false; });
+  document.addEventListener('mouseleave', () => { S.hoverLock = false; });
+  window.addEventListener('blur', () => { S.hoverLock = false; });
+  window.addEventListener('hashchange', () => { S.hoverLock = false; });
   /* 몇 초마다 화살표와 기울임이 다음 무드로 천천히 옮겨 감 */
   setInterval(() => {
     if(S.hoverLock || !page.classList.contains('active') || !S.route || S.route.view !== 'index') return;
