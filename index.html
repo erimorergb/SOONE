@@ -564,6 +564,13 @@
     font-size:12.5px;letter-spacing:.03em;line-height:1.5;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;}
   .ar-toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto;}
   .ar-toast.done{background:#F5F2EC;color:#393733;border:1px solid #393733;}
+  /* 무드 메뉴 선택 표시 ⊹˚. — 이름은 제자리, 기호만 살며시 떠오름 (기호 3글자만 담은 Noto Sans Math, OFL) */
+  @font-face{font-family:'SOONE Sparkle';src:url(data:font/woff2;base64,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) format('woff2');unicode-range:U+22B9,U+02DA,U+002E;}
+  .ar-row-n{gap:0;}
+  .ar-nm{position:relative;}
+  .ar-nm::after{content:'⊹˚.';position:absolute;left:100%;top:50%;margin-left:.45em;font-family:'SOONE Sparkle','Noto Sans Math','Segoe UI Symbol','Apple Symbols',sans-serif;
+    font-style:normal;font-weight:400;font-size:.62em;letter-spacing:.06em;line-height:1;white-space:nowrap;color:#393733;opacity:0;transform:translateY(-30%);transition:opacity .6s ease,transform .6s ease;pointer-events:none;}
+  .ar-row.on .ar-nm::after{opacity:1;transform:translateY(-50%);}
 </style>
 <style>/* 메뉴의 𓍯 기호 — 어떤 기기에서도 보이도록 글자 하나만 담은 폰트(Noto Sans Egyptian Hieroglyphs, OFL) */
 @font-face{font-family:'SOONE Hiero';src:url(data:font/woff2;base64,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) format('woff2');unicode-range:U+1336F;}
@@ -1260,11 +1267,12 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
 (function(){
   const CFG = window.SOONE_ARCHIVE_CONFIG || {};
   const CATS = [
-    { key:'bright',  name:'Bright',  group:'The Day',        no:'01', line:'Where light falls softly, and nothing needs to be hidden.' },
-    { key:'dark',    name:'Dark',    group:'The Day',        no:'02', line:'In the hush of candlelight, love speaks in a quieter voice.' },
-    { key:'outdoor', name:'Outdoor', group:'The Day',        no:'03', line:'Soft-lit, unhurried, and a moment that belongs only to two.' },
-    { key:'chapel',  name:'Chapel',  group:'The Day',        no:'04', line:'A stillness so deep that every vow is heard.' },
-    { key:'preveil', name:'Preveil', group:'Before the Day', no:'05', line:'The first time in the dress — a quiet becoming.' }
+    { key:'hotel',   name:'Hotel',   group:'The Day',        no:'01', line:'Beneath the chandeliers, a grandeur that still feels tender.' },
+    { key:'bright',  name:'Bright',  group:'The Day',        no:'02', line:'Where light falls softly, and nothing needs to be hidden.' },
+    { key:'dark',    name:'Dark',    group:'The Day',        no:'03', line:'In the hush of candlelight, love speaks in a quieter voice.' },
+    { key:'outdoor', name:'Outdoor', group:'The Day',        no:'04', line:'Soft-lit, unhurried, and a moment that belongs only to two.' },
+    { key:'chapel',  name:'Chapel',  group:'The Day',        no:'05', line:'A stillness so deep that every vow is heard.' },
+    { key:'preveil', name:'Preveil', group:'Before the Day', no:'06', line:'The first time in the dress — a quiet becoming.' }
   ];
   const GEAR = {
     director:'Premium Digital · Old Digital\niPhone 16 Pro · Vintage iPhone XS',
@@ -1277,7 +1285,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
 
   const page = document.getElementById('pg-archive');
   const root = document.getElementById('arcRoot');
-  const S = { venues:{}, site:{}, admin:false, ready:false, busy:false, login:false, hover:'', route:null };
+  const S = { venues:{}, site:{}, admin:false, ready:false, busy:false, login:false, hover:'hotel', hoverLock:false, route:null };
   LIST_KEYS.forEach(k => S.venues[k] = []);
 
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1590,8 +1598,8 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
   /* ── 화면 ① 인덱스 ── */
   function rIndex(){
     const row = c => '<a class="ar-row' + (c.key === S.hover ? ' on' : '') + '" href="#archive/' + c.key + '" data-hover="' + c.key + '">' +
-      '<span class="ar-row-n"><span class="ar-arr">⟶</span><span class="ar-nm">' + c.name + '</span></span>' +
-      '<span class="ar-row-no">(' + c.no + ')</span></a>';
+      '<span class="ar-row-n"><span class="ar-nm">' + c.name + '</span></span>' +
+      '</a>';
     const group = (label, sub, items) => '<div><div class="ar-ghead ar-lab"><span>' + label + '</span><span>' + sub + '</span></div>' + items.map(row).join('') + '</div>';
     return '' +
     '<section class="ar-hero">' +
@@ -1609,7 +1617,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
         '<p>Every hall holds its own light.<br>We do not fit the day into one style —<br>we follow its mood, and keep it as it<br>naturally unfolds.</p></div>' +
     '</section>' +
     '<section class="ar-idx">' +
-      '<div class="ar-groups">' + group('The Day', 'Wedding day', CATS.slice(0, 4)) + group('Before the Day', 'Fitting', CATS.slice(4)) + '</div>' +
+      '<div class="ar-groups">' + group('The Day', 'Wedding day', CATS.filter(c => c.group === 'The Day')) + group('Before the Day', 'Fitting', CATS.filter(c => c.group === 'Before the Day')) + '</div>' +
     '</section>';
   }
 
@@ -1645,7 +1653,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     '<section class="ar-chead">' +
       '<a class="ar-lab ar-ul" href="#archive">← Archive</a>' +
       '<h1 class="ar-ch1 ar-mt"><span>' + c.group + '</span><span class="ar-r">— ' + c.name + '</span></h1>' +
-      '<div class="ar-cbar"><div class="ar-cbar-l"><div class="ar-lab">[ ' + c.no + ' / 05 ]</div><p>' + c.line + '</p></div>' + tabs + '</div>' +
+      '<div class="ar-cbar"><div class="ar-cbar-l"><div class="ar-lab">[ ' + c.no + ' / ' + pad(CATS.length) + ' ]</div><p>' + c.line + '</p></div>' + tabs + '</div>' +
       '<label class="ar-search"><svg class="ar-lens" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6"/><path d="M13 13l5 5"/></svg>' +
         '<input type="search" data-search placeholder="Find a hall" aria-label="' + c.name + ' 홀 검색" autocomplete="off" enterkeyhint="search"></label>' +
     '</section>' +
@@ -1968,7 +1976,14 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     const t = root.querySelector('[data-cap="t"]'), l = root.querySelector('[data-cap="l"]');
     if(t) t.innerHTML = capHTML(c); if(l) l.textContent = c.line;
   }
-  root.addEventListener('mouseover', e => { const h = e.target.closest('[data-hover]'); setHover(h ? h.dataset.hover : ''); });
+  /* 마우스를 올리면 그 무드가 표시되고, 떼면 다시 자동으로 넘어감 */
+  root.addEventListener('mouseover', e => { const h = e.target.closest('[data-hover]'); if(h){ S.hoverLock = true; setHover(h.dataset.hover); } else S.hoverLock = false; });
+  /* 몇 초마다 화살표와 기울임이 다음 무드로 천천히 옮겨 감 */
+  setInterval(() => {
+    if(S.hoverLock || !page.classList.contains('active') || !S.route || S.route.view !== 'index') return;
+    const i = CATS.findIndex(c => c.key === S.hover);
+    setHover(CATS[(i + 1) % CATS.length].key);
+  }, 2600);
   root.addEventListener('focusin', e => { const h = e.target.closest('[data-hover]'); if(h) setHover(h.dataset.hover); });
 
   /* 끌어다 놓기 */
