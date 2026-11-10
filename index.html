@@ -579,6 +579,48 @@
   .arc .ar-ord button[data-act="insert"]{margin-left:auto;color:#393733;}
   .ar-fig.ar-moved .ar-slot{outline:1px solid #393733;outline-offset:6px;transition:outline-color 1s;}
   @media (max-width:760px){ .arc .ar-ord button{padding:8px 0;} .arc .ar-ord button[data-act="insert"]{margin-left:0;} }
+  /* ── 사진 크게 보기 (손님 화면) : 사진을 누르면 가로로 넘겨 보기 ── */
+  .ar-lb{position:fixed;inset:0;z-index:9000;background:#FFFFFF;color:#393733;display:flex;flex-direction:column;
+    opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s linear .45s;font-family:'Inter','Noto Sans KR',sans-serif;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);}
+  .ar-lb.open{opacity:1;visibility:visible;transition:opacity .45s ease;}
+  .ar-lb-top{flex:none;display:flex;justify-content:space-between;align-items:center;padding:22px clamp(20px,4vw,56px) 10px;}
+  .ar-lb-t{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#7A7267;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ar-lb-t b{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:15px;letter-spacing:.12em;color:#393733;margin-left:.5em;}
+  .ar-lb-x{display:flex;align-items:center;gap:10px;font-size:10.5px;letter-spacing:.24em;color:#393733;background:none;border:0;padding:8px 0 8px 12px;cursor:pointer;}
+  .ar-lb-x i{position:relative;width:16px;height:16px;display:inline-block;}
+  .ar-lb-x i::before,.ar-lb-x i::after{content:'';position:absolute;left:50%;top:50%;width:18px;height:1px;background:currentColor;}
+  .ar-lb-x i::before{transform:translate(-50%,-50%) rotate(45deg);} .ar-lb-x i::after{transform:translate(-50%,-50%) rotate(-45deg);}
+  .ar-lb-track{flex:1;min-height:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+  .ar-lb-track::-webkit-scrollbar{display:none;}
+  .ar-lb-s{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;padding:8px clamp(16px,6vw,120px);box-sizing:border-box;}
+  .ar-lb-s img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;opacity:0;transition:opacity .5s ease;user-select:none;-webkit-user-drag:none;}
+  .ar-lb-s img.ok{opacity:1;}
+  .ar-lb-bot{flex:none;display:flex;flex-direction:column;align-items:center;gap:14px;padding:14px 0 26px;}
+  .ar-lb-n{font-size:11px;letter-spacing:.2em;color:#7A7267;font-variant-numeric:tabular-nums;}
+  .ar-lb-n b{font-weight:400;color:#393733;}
+  .ar-lb-bar{width:min(220px,46vw);height:1px;background:#EFEBE4;position:relative;overflow:hidden;}
+  .ar-lb-bar span{position:absolute;left:0;top:0;bottom:0;background:#393733;transition:left .35s ease,width .35s ease;}
+  .ar-lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:none;border:0;color:#393733;font-size:20px;padding:24px 18px;cursor:pointer;opacity:.55;transition:opacity .3s;}
+  .ar-lb-nav:hover{opacity:1;} .ar-lb-nav[disabled]{opacity:0;pointer-events:none;}
+  .ar-lb-prev{left:clamp(4px,1.6vw,28px);} .ar-lb-next{right:clamp(4px,1.6vw,28px);}
+  .ar-lb-hint{position:absolute;left:50%;bottom:86px;transform:translateX(-50%);font-size:10px;letter-spacing:.24em;color:#9C9489;pointer-events:none;transition:opacity .8s;}
+  .ar-lb-hint.gone{opacity:0;}
+  /* 여백을 두고 사진이 화면에 꽉 차지 않게 — 저장된 원본 크기(긴 변 2000px)를 그대로 줄여 보여 줘서 화질 저하 없음 */
+  .ar-lb-s{padding:3vh 14vw;}
+  .ar-lb-s img{max-height:min(100%,76vh);image-rendering:auto;}
+  @media (hover:none),(max-width:760px){ .ar-lb-nav{display:none;} .ar-lb-s{padding:4vh 36px 2vh;} .ar-lb-s img{max-height:min(100%,66vh);} .ar-lb-top{padding:16px 20px 8px;} }
+  @media (hover:hover) and (min-width:761px){ .ar-lb-hint{display:none;} }
+  .arc .ar-photos .ar-fig img{cursor:zoom-in;}
+  html.ar-lb-lock,html.ar-lb-lock body{overflow:hidden;}
+  /* 크게 보기 안에서도 확대 막기: 옆으로 넘기기만 허용 */
+  .ar-lb{touch-action:pan-x;} .ar-lb-track{touch-action:pan-x;} .ar-lb-s img{touch-action:pan-x;pointer-events:none;}
+
+  /* PC: 스크롤 화면의 사진 크기 줄이기 — 한 장이 화면 높이 안에 다 들어오게 */
+  @media (min-width:761px){ .arc .ar-fig{max-width:min(460px,calc(74vh*.75));} .arc .ar-fig.w{max-width:min(860px,calc(74vh*1.5));} }
+  /* 사진 저장 막기 (아이폰 길게 누르기 메뉴, 끌어다 놓기) */
+  img{-webkit-touch-callout:none;-webkit-user-drag:none;-webkit-user-select:none;user-select:none;}
+  .arc .ar-photos img{pointer-events:auto;}
 </style>
 <style>/* 메뉴의 𓍯 기호 — 어떤 기기에서도 보이도록 글자 하나만 담은 폰트(Noto Sans Egyptian Hieroglyphs, OFL) */
 @font-face{font-family:'SOONE Hiero';src:url(data:font/woff2;base64,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) format('woff2');unicode-range:U+1336F;}
@@ -1273,6 +1315,75 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
            (github 값을 비우면 '로컬 미리보기' — 이 브라우저에만 저장)
    ══════════════════════════════════════════════════════════════ */
 (function(){
+/* ── 사진 크게 보기: openLB(사진주소 목록, 시작 번호, 홀 이름, 닫을 때 콜백) ── */
+const ArLB = (() => {
+  let el, track, nEl, barEl, hintEl, prevB, nextB, srcs = [], cur = 0, onClose = null, pushed = false, ticking = false;
+  const pad = n => String(n).padStart(2, '0');
+  function build(){
+    el = document.createElement('div'); el.className = 'ar-lb'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+    el.innerHTML =
+      '<div class="ar-lb-top"><span class="ar-lb-t">Wedding at<b></b></span><button class="ar-lb-x" type="button" aria-label="닫기">CLOSE<i></i></button></div>' +
+      '<div class="ar-lb-track"></div>' +
+      '<button class="ar-lb-nav ar-lb-prev" type="button" aria-label="이전 사진">⟵</button><button class="ar-lb-nav ar-lb-next" type="button" aria-label="다음 사진">⟶</button>' +
+      '<span class="ar-lb-hint">SWIPE ⟷</span>' +
+      '<div class="ar-lb-bot"><span class="ar-lb-n"></span><span class="ar-lb-bar"><span></span></span></div>';
+    document.body.appendChild(el);
+    track = el.querySelector('.ar-lb-track'); nEl = el.querySelector('.ar-lb-n'); barEl = el.querySelector('.ar-lb-bar span');
+    hintEl = el.querySelector('.ar-lb-hint'); prevB = el.querySelector('.ar-lb-prev'); nextB = el.querySelector('.ar-lb-next');
+    el.querySelector('.ar-lb-x').addEventListener('click', () => close());
+    prevB.addEventListener('click', () => go(cur - 1)); nextB.addEventListener('click', () => go(cur + 1));
+    track.addEventListener('scroll', () => { if(!ticking){ ticking = true; requestAnimationFrame(() => { ticking = false; sync(); }); } }, { passive:true });
+    track.addEventListener('touchstart', () => hintEl.classList.add('gone'), { passive:true });
+    document.addEventListener('keydown', e => {
+      if(!el.classList.contains('open')) return;
+      if(e.key === 'Escape') close(); else if(e.key === 'ArrowRight') go(cur + 1); else if(e.key === 'ArrowLeft') go(cur - 1);
+    });
+    /* 휴대폰 '뒤로 가기'를 누르면 페이지를 떠나지 않고 크게 보기만 닫힘 */
+    window.addEventListener('popstate', () => { if(el.classList.contains('open')){ pushed = false; close(true); } });
+    window.addEventListener('resize', () => { if(el.classList.contains('open')) track.scrollLeft = cur * track.clientWidth; });
+    /* 확대 막기 — 두 손가락 벌리기 · 두 번 탭 · (PC) Ctrl+휠 · Ctrl +/- */
+    const isOpen = () => el.classList.contains('open');
+    ['gesturestart','gesturechange','gestureend'].forEach(ev => el.addEventListener(ev, e => e.preventDefault(), { passive:false }));
+    el.addEventListener('touchmove', e => { if(e.touches.length > 1) e.preventDefault(); }, { passive:false });
+    let lastTap = 0;
+    el.addEventListener('touchend', e => { const now = Date.now(); if(now - lastTap < 320 && !e.target.closest('button')) e.preventDefault(); lastTap = now; }, { passive:false });
+    el.addEventListener('dblclick', e => e.preventDefault());
+    window.addEventListener('wheel', e => { if(isOpen() && e.ctrlKey) e.preventDefault(); }, { passive:false });
+    document.addEventListener('keydown', e => { if(isOpen() && (e.ctrlKey || e.metaKey) && ['+','=','-','0'].includes(e.key)) e.preventDefault(); });
+  }
+  function load(i){
+    const s = track.children[i]; if(!s) return;
+    const img = s.firstChild; if(img.dataset.src){ img.src = img.dataset.src; delete img.dataset.src; }
+  }
+  function sync(){
+    const w = track.clientWidth || 1, i = Math.max(0, Math.min(srcs.length - 1, Math.round(track.scrollLeft / w)));
+    if(i !== cur || !nEl.textContent){ cur = i; }
+    for(let k = cur - 1; k <= cur + 2; k++) load(k);
+    nEl.innerHTML = '<b>' + pad(cur + 1) + '</b> / ' + pad(srcs.length);
+    barEl.style.width = (100 / srcs.length) + '%'; barEl.style.left = (cur * 100 / srcs.length) + '%';
+    prevB.disabled = cur === 0; nextB.disabled = cur === srcs.length - 1;
+  }
+  function go(i){ if(i < 0 || i >= srcs.length) return; track.scrollTo({ left:i * track.clientWidth, behavior:'smooth' }); }
+  function open(list, start, title, cb){
+    if(!el) build();
+    srcs = list; cur = start || 0; onClose = cb || null; nEl.textContent = '';
+    el.querySelector('.ar-lb-t b').textContent = title || '';
+    track.innerHTML = list.map(s => '<div class="ar-lb-s"><img alt="" decoding="async" data-src="' + s.replace(/"/g, '&quot;') + '"></div>').join('');
+    track.querySelectorAll('img').forEach(img => img.addEventListener('load', () => img.classList.add('ok')));
+    hintEl.classList.toggle('gone', list.length < 2); clearTimeout(open.t); open.t = setTimeout(() => hintEl.classList.add('gone'), 2600);
+    document.documentElement.classList.add('ar-lb-lock'); el.classList.add('open');
+    track.scrollLeft = cur * track.clientWidth; sync();
+    if(!pushed){ history.pushState({ arLb:1 }, '', location.href); pushed = true; }
+  }
+  function close(fromPop){
+    if(!el || !el.classList.contains('open')) return;
+    el.classList.remove('open'); document.documentElement.classList.remove('ar-lb-lock');
+    if(pushed && !fromPop){ pushed = false; history.back(); }
+    if(onClose) onClose(cur);
+  }
+  return { open, close };
+})();
+
   const CFG = window.SOONE_ARCHIVE_CONFIG || {};
   const CATS = [
     { key:'hotel',   name:'Hotel',   group:'The Day',        no:'01', line:'Beneath the chandeliers, a grandeur that still feels tender.' },
@@ -1683,7 +1794,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     const wide = has && v.wide.includes(i);
     const src = has ? store.url(photoPath(v, i), v.ver, v.repo) : '';
     if(!S.admin){
-      return '<figure class="ar-fig reveal' + (wide ? ' w' : '') + '"><img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' +
+      return '<figure class="ar-fig reveal' + (wide ? ' w' : '') + '" data-view="' + p + '"><img draggable="false" src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' +
         '<figcaption><span>' + pad(p + 1) + ' / ' + pad(o.length) + '</span></figcaption></figure>';
     }
     return '<figure class="ar-fig' + (wide ? ' w' : '') + '" data-p="' + p + '">' +
@@ -1977,6 +2088,13 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
       else if(act === 'logout'){ flushCommit().then(() => store.chain || null).then(() => store.signOut()).finally(() => { S.admin = false; S.status = ''; render(); }); }
       return;
     }
+    const fv = !S.admin && e.target.closest('figure[data-view]');
+    if(fv){
+      const v = curVenue(); if(!v) return;
+      const list = ord(v).map(i => store.url(photoPath(v, i), v.ver, v.repo));
+      ArLB.open(list, +fv.dataset.view, v.en || v.kr, i => { const t = root.querySelector('figure[data-view="' + i + '"]'); if(t) t.scrollIntoView({ block:'center' }); });
+      return;
+    }
     const up = S.admin && e.target.closest('[data-up]');
     if(up){ e.preventDefault(); pick(up.dataset.up === 'bulk', fs => handleFiles(up, fs)); }
   });
@@ -1989,6 +2107,11 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
     try { await store.signIn(f.pw.value.trim()); S.admin = true; S.login = false; await loadData(); render(); }
     catch(x){ console.error(x); err.textContent = '토큰을 확인해 주세요. (SOONE 저장소 쓰기 권한이 필요해요)'; }
   });
+
+  /* 사진 저장 막기 — 길게 누르기/우클릭 메뉴, 끌어서 저장 차단 (관리자 화면은 제외) */
+  const noSave = e => { if(S.admin && page.contains(e.target)) return; const t = e.target; if(t.tagName === 'IMG' || t.closest('.ar-lb,.ar-photos,picture,figure')) e.preventDefault(); };
+  document.addEventListener('contextmenu', noSave);
+  document.addEventListener('dragstart', noSave);
 
   /* 홀 검색 — 지금 보고 있는 무드 안에서 (Director·Associate 모두), 한글·영문, 띄어쓰기 무시 */
   const norm = s => String(s || '').toLowerCase().replace(/[\s\-_.·]/g, '');
