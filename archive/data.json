@@ -1,6 +1,19 @@
 {
  "venues": [
   {
+   "list_key": "dark-lead",
+   "id": "villa-de-gd-chungdam",
+   "en": "Villa de GD Chungdam",
+   "kr": "빌라드지디 청담",
+   "count": 24,
+   "wide": [],
+   "filled": [],
+   "order": [],
+   "has_cover": false,
+   "ver": 0,
+   "sort": 1
+  },
+  {
    "list_key": "chapel-director",
    "id": "chapel-in-seocho",
    "en": "Chapel in Seocho",
