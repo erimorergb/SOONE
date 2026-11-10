@@ -5,7 +5,7 @@
    "id": "villa-de-gd-chungdam",
    "en": "Villa de GD Chungdam",
    "kr": "빌라드지디 청담",
-   "count": 32,
+   "count": 33,
    "wide": [],
    "filled": [
     0,
@@ -38,6 +38,7 @@
     26,
     27,
     30,
+    32,
     28,
     29
    ],
@@ -72,6 +73,7 @@
     26,
     27,
     30,
+    32,
     28,
     29
    ],
