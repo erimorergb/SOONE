@@ -516,7 +516,7 @@
     align-items:center;gap:10px;cursor:pointer;text-align:center;transition:background .2s,border-color .2s;}
   .ar-edit .ar-bulk.ar-over{border-color:#393733;background:#F5F2EC;outline:none;}
   .ar-bulk-s{font-size:12px;line-height:1.8;color:#5A564F;}
-  .ar-photos{padding:clamp(24px,4vw,56px) var(--ax) clamp(64px,8vw,120px);display:flex;flex-direction:column;align-items:center;gap:clamp(56px,9vw,128px);}
+  .ar-photos{padding:clamp(24px,4vw,56px) var(--ax) clamp(64px,8vw,120px);display:flex;flex-direction:column;align-items:center;gap:clamp(40px,5vw,72px);}
   .ar-fig{width:100%;max-width:640px;display:flex;flex-direction:column;gap:14px;}
   .ar-fig.w{max-width:1040px;}
   .ar-fig img{width:100%;height:auto;display:block;}
@@ -2158,7 +2158,7 @@ const ArLB = (() => {
     if(S.hoverLock || !page.classList.contains('active') || !S.route || S.route.view !== 'index') return;
     const i = CATS.findIndex(c => c.key === S.hover);
     setHover(CATS[(i + 1) % CATS.length].key);
-  }, 2600);
+  }, 1800);
   root.addEventListener('focusin', e => { const h = e.target.closest('[data-hover]'); if(h) setHover(h.dataset.hover); });
 
   /* 끌어다 놓기 */
