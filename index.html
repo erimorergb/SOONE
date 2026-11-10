@@ -604,7 +604,10 @@
   .ar-lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:none;border:0;color:#393733;font-size:20px;padding:24px 18px;cursor:pointer;opacity:.55;transition:opacity .3s;}
   .ar-lb-nav:hover{opacity:1;} .ar-lb-nav[disabled]{opacity:0;pointer-events:none;}
   .ar-lb-prev{left:clamp(4px,1.6vw,28px);} .ar-lb-next{right:clamp(4px,1.6vw,28px);}
-  .ar-lb-hint{position:absolute;left:50%;bottom:86px;transform:translateX(-50%);font-size:10px;letter-spacing:.24em;color:#9C9489;pointer-events:none;transition:opacity .8s;}
+  /* SWIPE 안내: 번호 위로 넉넉히 띄우고, 화살표가 살짝 좌우로 움직여 눈에 띄게 */
+  .ar-lb-hint{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:11px;letter-spacing:.28em;color:#5A564F;pointer-events:none;transition:opacity .8s;}
+  .ar-lb-hint i{font-style:normal;font-size:15px;letter-spacing:0;display:inline-block;animation:arLbNudge 1.6s ease-in-out infinite;}
+  @keyframes arLbNudge{0%,100%{transform:translateX(-3px);}50%{transform:translateX(3px);}}
   .ar-lb-hint.gone{opacity:0;}
   /* 여백을 두고 사진이 화면에 꽉 차지 않게 — 저장된 원본 크기(긴 변 2000px)를 그대로 줄여 보여 줘서 화질 저하 없음 */
   .ar-lb-s{padding:3vh 14vw;}
@@ -1325,8 +1328,7 @@ const ArLB = (() => {
       '<div class="ar-lb-top"><span class="ar-lb-t">Wedding at<b></b></span><button class="ar-lb-x" type="button" aria-label="닫기">CLOSE<i></i></button></div>' +
       '<div class="ar-lb-track"></div>' +
       '<button class="ar-lb-nav ar-lb-prev" type="button" aria-label="이전 사진">⟵</button><button class="ar-lb-nav ar-lb-next" type="button" aria-label="다음 사진">⟶</button>' +
-      '<span class="ar-lb-hint">SWIPE ⟷</span>' +
-      '<div class="ar-lb-bot"><span class="ar-lb-n"></span><span class="ar-lb-bar"><span></span></span></div>';
+      '<div class="ar-lb-bot"><span class="ar-lb-hint">SWIPE<i>⟷</i></span><span class="ar-lb-n"></span><span class="ar-lb-bar"><span></span></span></div>';
     document.body.appendChild(el);
     track = el.querySelector('.ar-lb-track'); nEl = el.querySelector('.ar-lb-n'); barEl = el.querySelector('.ar-lb-bar span');
     hintEl = el.querySelector('.ar-lb-hint'); prevB = el.querySelector('.ar-lb-prev'); nextB = el.querySelector('.ar-lb-next');
@@ -1370,7 +1372,7 @@ const ArLB = (() => {
     el.querySelector('.ar-lb-t b').textContent = title || '';
     track.innerHTML = list.map(s => '<div class="ar-lb-s"><img alt="" decoding="async" data-src="' + s.replace(/"/g, '&quot;') + '"></div>').join('');
     track.querySelectorAll('img').forEach(img => img.addEventListener('load', () => img.classList.add('ok')));
-    hintEl.classList.toggle('gone', list.length < 2); clearTimeout(open.t); open.t = setTimeout(() => hintEl.classList.add('gone'), 2600);
+    hintEl.classList.toggle('gone', list.length < 2); clearTimeout(open.t); open.t = setTimeout(() => hintEl.classList.add('gone'), 4000);
     document.documentElement.classList.add('ar-lb-lock'); el.classList.add('open');
     track.scrollLeft = cur * track.clientWidth; sync();
     if(!pushed){ history.pushState({ arLb:1 }, '', location.href); pushed = true; }
