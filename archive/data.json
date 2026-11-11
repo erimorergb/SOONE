@@ -286,10 +286,26 @@
    "id": "reareve",
    "en": "REAREVE",
    "kr": "레아레브",
-   "count": 24,
-   "wide": [],
-   "filled": [],
-   "order": [],
+   "count": 40,
+   "wide": [
+    0
+   ],
+   "filled": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "order": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
    "has_cover": true,
    "ver": 1794357585706,
    "sort": 2
