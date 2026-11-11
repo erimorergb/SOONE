@@ -628,6 +628,15 @@
   @media (min-width:601px){ .arc .ar-row{padding:clamp(10px,1.05vw,15px) 0;} }
   /* 첫 화면: 글 + 사진 묶음 전체를 화면 정가운데로 (글 칸이 남는 폭만큼 왼쪽이 비어 오른쪽으로 치우쳐 보이던 것 수정) */
   @media (min-width:761px){ .ar-hero{grid-template-columns:auto 400px;justify-content:center;} }
+  /* 사진 부드럽게 나타나기 — 받는 동안 연한 바탕으로 자리를 잡고, 다 받으면 천천히 떠오름 */
+  .ar-ph{position:relative;width:100%;background:#F5F2EC;overflow:hidden;}
+  .ar-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .arc img.fd{opacity:0;transition:opacity .7s ease;}
+  .arc img.fd.ok{opacity:1;}
+  .ar-cover{background:#F5F2EC;}
+  /* 정보표 아래 안내 문구 (압축본 안내) */
+  .ar-note{margin:16px 0 0;font-family:'Noto Sans KR','Inter',sans-serif;font-size:11.5px;line-height:1.7;letter-spacing:.01em;color:#9C9489;}
+  @media (max-width:760px){ .ar-note{font-size:10.5px;margin-top:12px;} }
 </style>
 <style>/* 메뉴의 𓍯 기호 — 어떤 기기에서도 보이도록 글자 하나만 담은 폰트(Noto Sans Egyptian Hieroglyphs, OFL) */
 @font-face{font-family:'SOONE Hiero';src:url(data:font/woff2;base64,d09GMgABAAAAAAq0ABAAAAAAFcwAAApdAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGyAcNgZgADAINAmcDBEICoMggxwBNgIkAwgLBgAEIAWFHAcgDIEnG64UUVSMshA/D2znKXscG1Roz5HB/7AwTIMCYXo7QpJZ//n/0/8fc+21d+JSKeQ03aVTUemFceCva7VX+OKX8F581V8mBUJLlnPgN0wFegWC5N+d9nYZSwCc7fYZTXTjz6b769fQ0uelUikM/h91vQWLCkiBq7wAySFySEOh3Z38JWlRyjhT1L+o3VVHDvv/v/a/eva5939MEt0kdNHKIkRKGc7Te+98mTfIF7EZRLSJhqKJ9SMikkwaVFbHO7URIi3T0DkWqZm1VXHOWWBn9qDwvwwIgBqevJGcX1oLJTgAWK2WJMjIOAn4pdy7xakRBExTvcNgxLpzZmxLSMC9uTBE10EEmIWZAZTs3p3aEBeYAKYRGRc5Y8hzMEQLiooCPGf9eiT4XwFAGOQLIqDDXKMdZ8ABA293JEC9O0wLFHmKXk7xu40cbnUxzYOKbhu+AbCfmStYbdmx9bdnh+8HPPvHAAg8pUWW3n7H2N1bpIe/EgnLhLyVrca6V5jVH8owEFob++C8B2+ANp8QA0sMEDDkbYDBvPmAAA2fhJkje+IMB6qU2NjMLLbAbsL4267QKoyzOsBvdyfW1cUS8e2c8heik35278EpXRGLk0OcTl/NwG36mCfn2MWTeExwnJiKRpw5g3lWp0E8dwtPf00hcZSLzQLpKHkEyzt/J33UjWah8pY1xoIcKQcdKW9ZLa2tAyEtdcKTcIyNAabnemir0VIiUptCWsNlqz7gJEoqKTmr7wAztNyA+wQuauOprGvsHfe+qN9twwboPt/FUOU81Ax5zkpQ/oA402IOiNBCcKuDUHCdUGhEqdF5n6EckCzudfK2pqiirovGvtNAdkqgvGoRmz7/fqjR8H8qeovpNXh6n8ra1Z2cLPssjA8JcmealDTXCiiAitcmdHmalO9NpdEENFZYtYVaUEbRDKggLYSem+88VCJShzFnqLDMBb6ZGpNqLHARr/rYIc3mseRrCd2f3ADhVrQY/YsGe+ew7JNuDMsYbVaCYCJ/zmVfdBQCAgqBrRakF50+yifdSOg+WifvzOerPmCDxrqO6CnzgC2gLGHDN+A2CRuNGdsTuIdtbcAOQcIub1HfeWiN/gU7Fo0dgp1GC9jj7W+p8fY8n0fXsd2AA9nwPr39tQ2cX8phXEc0TM1+z9qDO0MlYucZEGax2RSwvRI0Z0KwdWoWjMMtjhbhvKJt0xtUDn0HQmyBSww9MzZcYWvHKDB/bYsX79oQHGwOEexMFGP/3pywp6Hr6LeEvUYt0GtEp1COKt9cF/aGyT2H9sQYjUCOjwyV5jjgHPnyuRxwRsPstYALZCJXZuTGArkzJw8WyZMl8mIFebOSfFhVFQ5zwRWR8tvfkqmDvm6YIwMR1/s4698pI/sE6b9eM2APNq5qA1S+tJJupiJ8IfCDwB+CAAgCIQiCIBiCEAhCIQiD1EdBfcxSdKzgmjWTws28WkeZqLAtjoEg6+vcNAOxkFZyaJ3Vh/Zs33Yg6wxAccmmrun7joLuasQ2mxhnF+lmVtSPt9C2g9UnQPeEr0zEnnQvR2yPD7k4cumOmPuMAEB+Zg9bQpxVt1eSoF4rFUoA508USEZ3rA+kQNdC3FR80lQ0FuYuqNMKaITZ69FyoiurSh+cz5DGKSXG2cNXA2kAc7hohBvcIG/dtOEADa99HKNU6seUbRrpobq6S0gaEW4pOm6TMN6lT1wOigN3SQeXcowm1NToj1RiyzL3yDu2owjyF9NlOctgiKzDOsVBdd2Wh90W0R6rmgRPtqwPnaHmEmYowWi/RYW11FjSFHjWiFYRCdfCUx3W5DACSD1MN2HXlAMZ5phMEmIqsf5htk9miBokuzThK44szLqc0Cdp7JuCx9SpN+9g56uF6I1SJCN2e/35kvTjVgM+5TCrUV+YPYsD0sMpC4a87dJebjPC1BnyNy9xYVq7nZzU567FxJlrgRyAuXfceu8m9G1GOuNckOY8e8og3UcDKWF2gGMKdASJHTFFlBdiLkT9ZPyOilaj9hKjy5t6dfaQxS88H03dYxHMRfUfsQpkUUseZSf29tD5kFnks6hUUIWNa4YxhYR3L/JWikKbWQFF/uydn5twk2cPpfomNWekuKUEDTEOSO61pSAVUdmNMLcwdVqO/sVguXLEdICoyqJIRcQZIP9AJRNV9SegmsnWgKGAayWluv4E1DNFGyLOAsgdMCuixgEENCmi5uEAoUURtQ4goE2RbWeLPO5AHncij7uQZ7tzFHKP5NTbn4A+JtcvGmQ1AFkNQlZDkNUwZDUCWY1CVmOQu8cjTiPDh27iRHDKeOpJ5NgpuycymBqnI04TGM3kkZrNI5pbgkzCmNeZWNCZ/uIRTLQEglEvI0evwESrS5BFEms6C+s6Cxs6C5s6C1s6C9s6Czt9srGrs7Gns7Gvs3Ggs3Gos2HR2fVHEWc0H7c9TkkeZ86CB5v9fT18GxtN4aeUvaeEgHLhff0FkSCQ1coGv1jBWwUAsw4PpU+j9jJCvY3t4YOT+jtOvoA2fYna8pG9dTS+P9YcvXwZG8dz59SWk6THj4+x8XlNbXnnDG1+XONyyyPOJydBHjcfHyfe/LBTE+vZUM3R8TDPjeOsW3uiqqmjRy8+SZtPXFBbPso4f2w+evNFFkPdHR/LQvj/YvrG4ZXyu+1KGrWtqinFNO/yDnapTJMHQqvljvBM2bPMjzW91hsb6+Se4en+zHiPzr/W3i4F5h6lAYlXX/YK6X3aL9E0TfUfPvZitcdk/FX37Zq8mwO//vC2F6nJ37Mmp2QgpqRhMiq7xLVB6RV1KqbUk9rWJruS0ptuCF5i3xZecnY4u+AQ0hJ2cqVe+3iuY3x3bJBPZWje73NfJBQYiv1jEnNqAcBYpRFhtM2J93eURImVggPEMYggiSQNKkkEU4hsUEUKQVA0Im8Ud2J+lkJVX6+5vnemb6ajrb7H3FOYHxocHKmW3FMQAIbtXUf/TLtNxldpI3wPAB89s3YCAN+ZHmT/d/j/FcVpMQIggQEACPizoVjxnaCv1UUQN1/WZcyMtngUsUyemv+NRNk4GEUEn+FqEH53+h5CXqZA08F6XAXgAtSjCRkujGbQ45fRAloCjOYoDVpGi6gNHns2CfnBf8g1bsKiKYP6DZhhECfGtcYxqCXR21pu3Iy1GlSaau1DenWD3z3HrBkDxk2ZZhBCxjMzQaydJlq0foNA95vVJUq3caOijRE1fc6MBWaaNr1ys1hsZopMZ8JEFppBE6Ze0o3UJw6YFiqSqwEW5nvKIzBvg0JXzcrMkqYz3R4nSozKrekKVPyqCqSnaQZbrLal2kNkuvME3ZOhdvVgZlpuxxE3F90ZjN7ep9PsIIYTs4pDonNiRUlxSBg/WaREPX9Dl1BFQwHLfK137Ylz7ZInXqs2nya6pvEUfRteYX8aCtMZF0LYfsdZrZLU5QBHaXWl6YpgBEEzSaVxxxcEQD4F0EGV+ZTxwHyKejik4pISZQxy43E6uO5xRbkB4tLF3bXXZLnVWb1E+rAnWXfhV59mT/wi9kiQMw==) format('woff2');unicode-range:U+1336F;}
@@ -1554,7 +1563,7 @@ const ArLB = (() => {
       }
       items.filter(x => x.sha).forEach(x => tree.push({ path:x.path, mode:'100644', type:'blob', sha:x.sha }));
       if(withData){
-        const all = []; LIST_KEYS.forEach(k => S.venues[k].forEach(v => { const o = { list_key:v.list_key, id:v.id, en:v.en, kr:v.kr, count:v.count, wide:v.wide, filled:v.filled, order:ord(v), has_cover:v.has_cover, ver:v.ver, sort:v.sort }; if(v.repo) o.repo = v.repo; all.push(o); }));
+        const all = []; LIST_KEYS.forEach(k => S.venues[k].forEach(v => { const o = { list_key:v.list_key, id:v.id, en:v.en, kr:v.kr, count:v.count, wide:v.wide, filled:v.filled, order:ord(v), has_cover:v.has_cover, ver:v.ver, sort:v.sort }; if(v.repo) o.repo = v.repo; if(v.ratio) o.ratio = pruneRatio(v); all.push(o); }));
         const data = JSON.stringify({ venues:all, site:Object.keys(S.site).map(slot => ({ slot, ver:S.site[slot] })) }, null, 1);
         tree.push({ path:DATA_PATH, mode:'100644', type:'blob', content:data });
       }
@@ -1661,7 +1670,7 @@ const ArLB = (() => {
       tmp.getContext('2d').drawImage(cv, 0, 0, pw, ph);
       const preview = await toBlobP(tmp, 0.8);
       tmp.width = tmp.height = 0;
-      return { blob, preview, wide: cw > ch };
+      return { blob, preview, wide: cw > ch, ratio: Math.round(cw / ch * 1000) / 1000 };
     } finally {
       cv.width = cv.height = 1;
       if(src && src.close) src.close();
@@ -1702,7 +1711,7 @@ const ArLB = (() => {
   function siteSrc(slot){ return S.site[slot] ? store.url(sitePath(slot), S.site[slot]) : (SITE_DEFAULT[slot] || ''); }
   function box(src, upAttrs, label){
     const up = S.admin && upAttrs ? ' ' + upAttrs : '';
-    const inner = src ? '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' : (S.admin && upAttrs ? '<span class="ar-phl">' + esc(label) + '</span>' : '');
+    const inner = src ? '<img class="fd" src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' : (S.admin && upAttrs ? '<span class="ar-phl">' + esc(label) + '</span>' : '');
     return '<div class="ar-ph"' + up + '>' + inner + '</div>';
   }
   /* 올린 사진을 자르지 않고 원래 비율 그대로 보여 주는 칸 (비어 있을 때만 ratio 비율의 자리 표시) */
@@ -1792,6 +1801,7 @@ const ArLB = (() => {
 
   /* ── 화면 ③ 예식홀 ── */
   /* 사진 순서: v.order = 화면에 보이는 순서대로의 파일 번호. 중간 사진을 지우면 뒤 사진이 앞으로 당겨지고 번호도 다시 매겨짐 */
+  function pruneRatio(v){ const r = {}, has = new Set(ord(v)); Object.keys(v.ratio || {}).forEach(k => { if(has.has(+k)) r[k] = v.ratio[k]; }); return r; }
   function ord(v){ if(!v.order) v.order = v.filled.slice().sort((a, b) => a - b); return v.order; }
   function syncFilled(v){ v.filled = ord(v).slice(); }
   function nextFree(v){ const used = new Set(ord(v)); let i = 0; while(used.has(i)) i++; return i; }
@@ -1800,7 +1810,8 @@ const ArLB = (() => {
     const wide = has && v.wide.includes(i);
     const src = has ? store.url(photoPath(v, i), v.ver, v.repo) : '';
     if(!S.admin){
-      return '<figure class="ar-fig reveal' + (wide ? ' w' : '') + '" data-view="' + p + '"><img draggable="false" src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' +
+      const r = (v.ratio && v.ratio[i]) || (wide ? 1.5 : 0.75), early = p < 2;
+      return '<figure class="ar-fig reveal' + (wide ? ' w' : '') + '" data-view="' + p + '"><div class="ar-ph" style="aspect-ratio:' + r + '"><img class="fd" draggable="false" src="' + esc(src) + '" alt="" ' + (early ? 'fetchpriority="high"' : 'loading="lazy"') + ' decoding="async"></div>' +
         '<figcaption><span>' + pad(p + 1) + ' / ' + pad(o.length) + '</span></figcaption></figure>';
     }
     return '<figure class="ar-fig' + (wide ? ' w' : '') + '" data-p="' + p + '">' +
@@ -1834,6 +1845,7 @@ const ArLB = (() => {
         '<div><dt>Artist</dt><dd>' + (pre ? 'Director' : ARTISTS.find(a => a.key === r.artist).label) + '</dd></div>' +
         '<div><dt>Shot on</dt><dd>' + esc(pre ? GEAR.preveil : GEAR[r.artist]) + '</dd></div>' +
       '</dl>' +
+      '<p class="ar-note">※ 업로드된 이미지는 압축본으로, 실제 원본과 화질 차이가 있을 수 있습니다.</p>' +
     '</section>' +
     (S.admin ? '<div class="ar-bulk-w"><div class="ar-bulk" data-up="bulk">' +
         '<span class="ar-lab" data-bulk-t>' + (S.busy ? '업로드 중' : '+ 사진 한번에 올리기') + '</span>' +
@@ -1881,6 +1893,7 @@ const ArLB = (() => {
     root.classList.toggle('ar-edit', S.admin);
     root.innerHTML = rTop() + body + rLogin();
     if(typeof obs !== 'undefined') root.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    markLoaded();
     const f = root.querySelector('[data-form="login"] input'); if(f) f.focus();
   }
   function patchPos(v, p){ const f = root.querySelector('figure[data-p="' + p + '"]'); if(f) f.outerHTML = figAt(v, p); }
@@ -1930,13 +1943,14 @@ const ArLB = (() => {
     catch(e){ fail(e, '사진을 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 올려 주세요)'); }
     S.busy = false; render(); commit('사진 ' + slot);
   }
+  function setRatio(v, i, r){ if(!r) return; if(!v.ratio) v.ratio = {}; v.ratio[i] = r; }
   function setWide(v, i, wide){ v.wide = v.wide.filter(x => x !== i); if(wide) v.wide.push(i); }
   async function uploadPhoto(v, p, file, el){
     if(busyGuard()) return; S.busy = true; el.classList.add('ar-wait');
     const o = ord(v); let replaced = false;
     try {
       const i = p < o.length ? o[p] : nextFree(v);
-      const { blob, preview, wide } = await compress(file); await store.put(photoPath(v, i), blob, preview, v.repo);
+      const { blob, preview, wide, ratio } = await compress(file); await store.put(photoPath(v, i), blob, preview, v.repo); setRatio(v, i, ratio);
       if(p < o.length){ v.ver = bump(); replaced = true; } else { o.push(i); if(o.length > v.count) v.count = o.length; }
       setWide(v, i, wide); syncFilled(v); await store.saveVenue(v);
     } catch(e){ fail(e, '사진을 올리지 못했어요. (HEIC 사진이면 JPG로 바꿔 올려 주세요)'); }
@@ -1962,7 +1976,7 @@ const ArLB = (() => {
       if(ins) toast('사진 넣는 중 · ' + (k + 1) + ' / ' + files.length);
       try {
         const i = nextFree(v);
-        const { blob, preview, wide } = await compress(files[k]); await store.put(photoPath(v, i), blob, preview, v.repo);
+        const { blob, preview, wide, ratio } = await compress(files[k]); await store.put(photoPath(v, i), blob, preview, v.repo); setRatio(v, i, ratio);
         if(ins) o.splice(p, 0, i); else o.push(i);
         setWide(v, i, wide); syncFilled(v);
       } catch(e){ fails++; if(ins) at--; console.error('[archive]', files[k].name, e); if(slot) slot.classList.remove('ar-wait'); }
@@ -2114,6 +2128,37 @@ const ArLB = (() => {
     catch(x){ console.error(x); err.textContent = '토큰을 확인해 주세요. (SOONE 저장소 쓰기 권한이 필요해요)'; }
   });
 
+  /* 사진 부드럽게 나타나기 — 다 받은 뒤 페이드인, 실제 비율로 자리 맞춤 */
+  function imgReady(img){
+    img.classList.add('ok');
+    const ph = img.parentElement;
+    if(ph && ph.classList.contains('ar-ph') && img.naturalWidth) ph.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
+  }
+  root.addEventListener('load', e => {
+    const img = e.target; if(img.tagName !== 'IMG') return;
+    if(img.classList.contains('fd')) imgReady(img);
+    if(S.admin) noteRatio(img);
+  }, true);
+  root.addEventListener('error', e => { if(e.target.tagName === 'IMG') e.target.classList.add('ok'); }, true);
+  function markLoaded(){ root.querySelectorAll('img.fd:not(.ok)').forEach(img => { if(img.complete && img.naturalWidth) imgReady(img); }); }
+  /* 예전에 올린 사진은 비율 정보가 없어서, 관리자 화면에서 볼 때 한 번 기록해 둠 (손님 화면 자리 잡기용) */
+  let ratioT = null;
+  function noteRatio(img){
+    const f = img.closest('figure[data-p]'), v = curVenue(); if(!f || !v || !img.naturalWidth) return;
+    const i = ord(v)[+f.dataset.p]; if(i == null || (v.ratio && v.ratio[i])) return;
+    setRatio(v, i, Math.round(img.naturalWidth / img.naturalHeight * 1000) / 1000);
+    clearTimeout(ratioT); ratioT = setTimeout(async () => { if(S.busy) return; try { await store.saveVenue(v); commit('사진 비율 기록 ' + v.en); } catch(e){} }, 3000);
+  }
+  /* 홀 카드에 손가락/마우스를 올리면 첫 사진들을 미리 받아 둠 → 들어갔을 때 바로 보임 */
+  const warmed = new Set();
+  function warm(card){
+    const id = card && card.dataset.card; if(!id || warmed.has(id) || S.admin) return; warmed.add(id);
+    const v = findVenue(id); if(!v) return;
+    ord(v).slice(0, 3).forEach(i => { const im = new Image(); im.decoding = 'async'; im.src = store.url(photoPath(v, i), v.ver, v.repo); });
+  }
+  root.addEventListener('pointerover', e => warm(e.target.closest('[data-card]')));
+  root.addEventListener('touchstart', e => warm(e.target.closest('[data-card]')), { passive:true });
+
   /* 사진 저장 막기 — 길게 누르기/우클릭 메뉴, 끌어서 저장 차단 (관리자 화면은 제외) */
   const noSave = e => { if(S.admin && page.contains(e.target)) return; const t = e.target; if(t.tagName === 'IMG' || t.closest('.ar-lb,.ar-photos,picture,figure')) e.preventDefault(); };
   document.addEventListener('contextmenu', noSave);
@@ -2190,7 +2235,7 @@ const ArLB = (() => {
     (d.venues || []).forEach(row => {
       if(!S.venues[row.list_key]) return;
       S.venues[row.list_key].push({ list_key:row.list_key, id:row.id, en:row.en || '', kr:row.kr || '', count:row.count || 24,
-        wide:row.wide || [], filled:row.filled || [], has_cover:!!row.has_cover, ver:row.ver || 0, sort:row.sort || 0, repo:row.repo || null, order:row.order || null });
+        wide:row.wide || [], filled:row.filled || [], has_cover:!!row.has_cover, ver:row.ver || 0, sort:row.sort || 0, repo:row.repo || null, order:row.order || null, ratio:row.ratio || null });
     });
     LIST_KEYS.forEach(k => S.venues[k].sort((a, b) => (a.sort || 0) - (b.sort || 0)));
     (d.site || []).forEach(s => { S.site[s.slot] = s.ver || 1; });
