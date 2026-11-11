@@ -5,13 +5,35 @@
    "id": "lavre-ednia",
    "en": "lavre ednia",
    "kr": "라브르에드니아",
-   "count": 24,
+   "count": 72,
    "wide": [],
-   "filled": [],
-   "order": [],
+   "filled": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "order": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
    "has_cover": true,
    "ver": 1794389131481,
-   "sort": 1
+   "sort": 1,
+   "ratio": {
+    "0": 0.75,
+    "1": 0.75,
+    "2": 0.75,
+    "3": 0.75,
+    "4": 0.75,
+    "5": 0.75
+   }
   },
   {
    "list_key": "dark-lead",
