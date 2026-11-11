@@ -280,6 +280,19 @@
    "has_cover": true,
    "ver": 1793976596607,
    "sort": 1
+  },
+  {
+   "list_key": "preveil",
+   "id": "reareve",
+   "en": "REAREVE",
+   "kr": "레아레브",
+   "count": 24,
+   "wide": [],
+   "filled": [],
+   "order": [],
+   "has_cover": false,
+   "ver": 0,
+   "sort": 2
   }
  ],
  "site": [
