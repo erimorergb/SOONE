@@ -1,6 +1,19 @@
 {
  "venues": [
   {
+   "list_key": "bright-director",
+   "id": "lavre-ednia",
+   "en": "lavre ednia",
+   "kr": "라브르에드니아",
+   "count": 24,
+   "wide": [],
+   "filled": [],
+   "order": [],
+   "has_cover": false,
+   "ver": 0,
+   "sort": 1
+  },
+  {
    "list_key": "dark-lead",
    "id": "villa-de-gd-chungdam",
    "en": "Villa de GD Chungdam",
