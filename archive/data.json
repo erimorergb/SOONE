@@ -1,6 +1,19 @@
 {
  "venues": [
   {
+   "list_key": "hotel-director",
+   "id": "grand-hyatt",
+   "en": "GRAND HYATT",
+   "kr": "그랜드하얏트 남산룸",
+   "count": 24,
+   "wide": [],
+   "filled": [],
+   "order": [],
+   "has_cover": false,
+   "ver": 0,
+   "sort": 1
+  },
+  {
    "list_key": "bright-director",
    "id": "lavre-ednia",
    "en": "lavre ednia",
