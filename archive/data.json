@@ -7,11 +7,18 @@
    "kr": "그랜드하얏트 남산룸",
    "count": 24,
    "wide": [],
-   "filled": [],
-   "order": [],
+   "filled": [
+    0
+   ],
+   "order": [
+    0
+   ],
    "has_cover": true,
    "ver": 0,
-   "sort": 1
+   "sort": 1,
+   "ratio": {
+    "0": 0.75
+   }
   },
   {
    "list_key": "bright-director",
