@@ -448,19 +448,34 @@
    "id": "sono-felice-convention",
    "en": "SONO FELICE CONVENTION",
    "kr": "소노펠리체컨벤션",
-   "count": 24,
+   "count": 57,
    "wide": [],
    "filled": [
-    0
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
    ],
    "order": [
-    0
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
    ],
    "has_cover": true,
    "ver": 1795148667593,
    "sort": 1,
    "ratio": {
-    "0": 0.75
+    "0": 0.75,
+    "1": 0.75,
+    "2": 0.75,
+    "3": 0.75,
+    "4": 0.75,
+    "5": 0.75
    }
   },
   {
